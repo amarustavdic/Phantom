@@ -5,19 +5,56 @@ package com.ustavdica;
  */
 public class State {
 
-    private long[] bitboards;
+    private final long[] bitboards;
     private long metadata;
 
     // Experimenting for now
     private long magicMask = 0L;
-    private long[] masks = new long[49];
+    private final long[] masks = new long[49];
 
     public State(Player startingPlayer) {
         this.bitboards = new long[2];
         this.metadata = 0L;
         setNextPlayer(startingPlayer);
+        setMasks();
     }
 
+    // ------- working on this rn
+
+    private void setMasks() {
+
+        // Generate corner masks (0, 6, 42, 48)
+        masks[48] = 0x0001830000000000L; // Top left
+        masks[42] = 0x00000C1800000000L; // Top right
+        masks[6] =  0x0000000000003060L; // Bottom left
+        masks[0] =  0x0000000000000183L; // Bottom right
+
+        // Generate inner masks (8-12, 15-19, 22-26, 29-33, 36-40)
+        long mask = 0x000000000001C387L; // Base mask
+        for (int row = 1; row <= 5; row++) {
+            int start = row * 7 + 1;
+            for (int shift = 0; shift < 5; shift++) {
+                masks[start + shift] = mask << (row - 1) * 7 + shift;
+            }
+        }
+
+        // todo Generate top masks
+
+        // todo Generate bottom masks
+
+        // todo Generate left masks
+
+        // todo Generate right masks
+
+    }
+
+    private long generateMask(int[] squares) {
+        long mask = 0L;
+        for (int i = 0; i < squares.length; i++) {
+            mask |= 1L << squares[i];
+        }
+        return mask;
+    }
 
     public boolean makeMove(int square) {
 
@@ -26,9 +63,10 @@ public class State {
             bitboards[getNextPlayer().ordinal()] |= 1L << square;
             switchPlayer();
 
-            long mask = (1L << 41) | (1L << 40) | (1L << 34) | (1L << 33) | (1L << 27) | (1L << 26);
+            // long mask = (1L << 41) | (1L << 40) | (1L << 34) | (1L << 33) | (1L << 27) | (1L << 26);
 
-            //print(mask ^ getCombinedBitboard());
+            //print(masks[48]);
+            //print(masks[47]);
 
             return true;
         //} else {
@@ -40,6 +78,8 @@ public class State {
          //   return false;
         //}
     }
+
+    // ---------------------
 
     /**
      * Retrieves the combined bitboard representing all occupied squares.
