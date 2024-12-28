@@ -109,10 +109,15 @@ public class State {
             // Check if wanted move can be played, if not exit
             if ((nextValidMovesMask & squareMask) == 0) {
 
+                // TODO: There is bug here figure out what exactly, happens, I know I know shitty code needs refactoring
+
                 System.out.println("Not a standard move!");
 
                 // Check if the played move is in tracer ^ combined
                 long y = tracer ^ getCombinedBitboard();
+
+                print(y);
+
                 if ((y & squareMask) == 0) {
                     return false;
                 } else {
@@ -146,7 +151,13 @@ public class State {
     }
 
     public List<Integer> getLegalMoves() {
-        return bitboardToMoves(nextValidMovesMask);
+
+        if (nextValidMovesMask != 0) {
+            return bitboardToMoves(nextValidMovesMask);
+        } else {
+            long alternative = getCombinedBitboard() ^ tracer;
+            return bitboardToMoves(alternative);
+        }
     }
 
     /**

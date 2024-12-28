@@ -16,7 +16,7 @@ public class Main {
             int square = Integer.parseInt(br.readLine());
             state.makeMove(square);
             state.print();
-            // state.print(state.getNextValidMovesMask());
+            state.print(state.getNextValidMovesMask());
             state.getLegalMoves().forEach(System.out::println);
         }
     }
