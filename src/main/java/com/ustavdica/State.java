@@ -9,7 +9,7 @@ public class State {
     private long metadata;
 
     // Experimenting for now
-    private long magicMask = 0L;
+    private long tracer = 0L;
     private final long[] masks = new long[49];
 
     public State(Player startingPlayer) {
@@ -47,22 +47,41 @@ public class State {
 
         // Generate top masks (47-43)
         long x = generateMask(new int[]{44, 43, 42, 37, 36, 35});
-        print(x << 1);
-
+        masks[43] = x;
+        masks[44] = x << 1;
+        masks[45] = x << 2;
+        masks[46] = x << 3;
+        masks[47] = x << 4;
 
         // Generate bottom masks (5-1)
+        long y = generateMask(new int[]{9, 8, 7, 2, 1, 0});
+        masks[1] = y;
+        masks[2] = y << 1;
+        masks[3] = y << 2;
+        masks[4] = y << 3;
+        masks[5] = y << 4;
 
         // Generate left masks
+        long z = generateMask(new int[]{20, 19, 13, 12, 6, 5});
+        masks[13] = z;
+        masks[20] = z << 7;
+        masks[27] = z << 14;
+        masks[34] = z << 21;
+        masks[41] = z << 28;
 
-        // todo Generate right masks
+        // Generate right masks
+        long u = generateMask(new int[]{15, 14, 8, 7, 1, 0});
+        masks[7] = u;
+        masks[14] = u << 7;
+        masks[21] = u << 14;
+        masks[28] = u << 21;
+        masks[35] = u << 28;
 
     }
 
     private long generateMask(int[] squares) {
         long mask = 0L;
-        for (int i = 0; i < squares.length; i++) {
-            mask |= 1L << squares[i];
-        }
+        for (int square : squares) mask |= 1L << square;
         return mask;
     }
 
