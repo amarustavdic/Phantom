@@ -23,6 +23,25 @@ public class State {
         setMasks();
     }
 
+
+
+    // Some testing for the program structure improvement
+
+
+    // Internal methods accessible by StateHandler
+
+    long[] getBitboards() {
+        return bitboards;
+    }
+
+
+
+
+
+
+
+
+
     // ------- working on this rn
 
     private void setMasks() {
@@ -176,6 +195,10 @@ public class State {
      * Applies a move and updates relevant masks.
      */
     private boolean applyMove(long squareMask, int square) {
+
+        // Looks like a quick fix
+        if ((nextValidMovesMask & squareMask) == 0) return false;
+
         bitboards[getNextPlayer().ordinal()] |= squareMask;
         updateMasks(squareMask, square);
         switchPlayer();
