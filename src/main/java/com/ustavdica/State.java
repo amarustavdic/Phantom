@@ -94,7 +94,7 @@ public class State {
             long x = squareMask ^ masks[square];
 
             // Remember what are next valid moves (save mask)
-            nextValidMovesMask = x;
+            nextValidMovesMask = x ^ getCombinedBitboard() ^ squareMask;
 
             // Update tracer mask
             tracer |= x;
@@ -106,15 +106,17 @@ public class State {
             // Check if wanted move can be played, if not exit
             if ((nextValidMovesMask & squareMask) == 0) {
 
+                System.out.println("Not a standard move!");
+
                 // Check if the played move is in tracer ^ combined
                 long y = tracer ^ getCombinedBitboard();
-                if (y == 0) {
+                if ((y & squareMask) == 0) {
                     return false;
                 } else {
                     // Apply the move
                     bitboards[getNextPlayer().ordinal()] |= squareMask;
                     long x = squareMask ^ masks[square];
-                    nextValidMovesMask = x;
+                    nextValidMovesMask = x ^ getCombinedBitboard() ^ squareMask;
                     tracer |= x;
                     switchPlayer();
                     return true;
@@ -124,7 +126,7 @@ public class State {
             // Apply the move
             bitboards[getNextPlayer().ordinal()] |= squareMask;
             long x = squareMask ^ masks[square];
-            nextValidMovesMask = x;
+            nextValidMovesMask = x ^ getCombinedBitboard() ^ squareMask;
             tracer |= x;
             switchPlayer();
 
@@ -134,6 +136,10 @@ public class State {
 
     public long getTracerMask() {
         return tracer;
+    }
+
+    public long getNextValidMovesMask() {
+        return nextValidMovesMask;
     }
 
     // ---------------------
