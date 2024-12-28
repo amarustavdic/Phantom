@@ -150,8 +150,14 @@ public class State {
         return nextValidMovesMask;
     }
 
+    /**
+     * Retrieves a list of legal moves based on the current game state.
+     *
+     * @return A list of integers representing the indices (square numbers) of legal moves.
+     *         If there are standard moves available, they are returned. Otherwise, alternative
+     *         moves are computed as the difference between the combined bitboard and the tracer.
+     */
     public List<Integer> getLegalMoves() {
-
         if (nextValidMovesMask != 0) {
             return bitboardToMoves(nextValidMovesMask);
         } else {
@@ -180,8 +186,6 @@ public class State {
         }
         return moves;
     }
-
-    // ---------------------
 
     /**
      * Retrieves the combined bitboard representing all occupied squares.
