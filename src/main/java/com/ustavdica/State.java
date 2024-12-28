@@ -94,7 +94,7 @@ public class State {
             long x = squareMask ^ masks[square];
 
             // Remember what are next valid moves (save mask)
-            nextValidMovesMask = x ^ getCombinedBitboard() ^ squareMask;
+            nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
 
             // Update tracer mask
             tracer |= x;
@@ -116,7 +116,7 @@ public class State {
                     // Apply the move
                     bitboards[getNextPlayer().ordinal()] |= squareMask;
                     long x = squareMask ^ masks[square];
-                    nextValidMovesMask = x ^ getCombinedBitboard() ^ squareMask;
+                    nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
                     tracer |= x;
                     switchPlayer();
                     return true;
@@ -126,7 +126,7 @@ public class State {
             // Apply the move
             bitboards[getNextPlayer().ordinal()] |= squareMask;
             long x = squareMask ^ masks[square];
-            nextValidMovesMask = x ^ getCombinedBitboard() ^ squareMask;
+            nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
             tracer |= x;
             switchPlayer();
 
