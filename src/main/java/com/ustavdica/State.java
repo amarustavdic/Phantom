@@ -83,63 +83,130 @@ public class State {
     }
 
     public boolean makeMove(int square) {
-
         long squareMask = 1L << square;
+        long combinedBoard = getCombinedBitboard();
 
-        // If board is empty apply move and return true
-        if (getCombinedBitboard() == 0) {
-
-            // Apply the move
-            bitboards[getNextPlayer().ordinal()] |= squareMask;
-            switchPlayer();
-
-            // Calculate next valid moves
-            long x = squareMask ^ masks[square];
-
-            // Remember what are next valid moves (save mask)
-            nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
-
-            // Update tracer mask
-            tracer |= x;
-
-            return true;
-        } else {
-            // If board has last move validate if move can be played, then apply it
-
-            // Check if wanted move can be played, if not exit
-            if ((nextValidMovesMask & squareMask) == 0) {
-
-                // TODO: There is bug here figure out what exactly, happens, I know I know shitty code needs refactoring
-
-                System.out.println("Not a standard move!");
-
-                // Check if the played move is in tracer ^ combined
-                long y = tracer ^ getCombinedBitboard();
-
-                print(y);
-
-                if ((y & squareMask) == 0) {
-                    return false;
-                } else {
-                    // Apply the move
-                    bitboards[getNextPlayer().ordinal()] |= squareMask;
-                    long x = squareMask ^ masks[square];
-                    nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
-                    tracer |= x;
-                    switchPlayer();
-                    return true;
-                }
-            }
-
-            // Apply the move
-            bitboards[getNextPlayer().ordinal()] |= squareMask;
-            long x = squareMask ^ masks[square];
-            nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
-            tracer |= x;
-            switchPlayer();
-
-            return true;
+        // Handle the first move (empty board)
+        if (combinedBoard == 0) {
+            return applyFirstMove(squareMask, square);
         }
+
+        // Validate and handle standard and non-standard move
+        if ((nextValidMovesMask & squareMask) != 0) {
+            // Standard move
+            return applyMove(squareMask, square);
+        } else {
+            // Non-standard move
+            return validateAndApplyNonStandardMove(squareMask, square);
+        }
+//
+//
+//
+//        // If board is empty apply move and return true
+//        if (getCombinedBitboard() == 0) {
+//
+//            // Apply the move
+//            bitboards[getNextPlayer().ordinal()] |= squareMask;
+//            switchPlayer();
+//
+//            // Calculate next valid moves
+//            long x = squareMask ^ masks[square];
+//
+//            // Remember what are next valid moves (save mask)
+//            nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
+//
+//            // Update tracer mask
+//            tracer |= x;
+//
+//            return true;
+//        } else {
+//            // If board has last move validate if move can be played, then apply it
+//
+//            // Check if wanted move can be played, if not exit
+//            if ((nextValidMovesMask & squareMask) == 0) {
+//
+//                // TODO: There is bug here figure out what exactly, happens, I know I know shitty code needs refactoring
+//
+//                // The problem is that when you create an island, and then yes you can play on squares that are
+//                // just next to that island, but the bug is that it lets you play more times near that island...
+//
+//
+//                System.out.println("Not a standard move!");
+//
+//                // Check if the played move is in tracer ^ combined
+//                long y = tracer ^ getCombinedBitboard();
+//
+//                print(y);
+//
+//                if ((y & squareMask) == 0) {
+//                    return false;
+//                } else {
+//                    // Apply the move
+//                    bitboards[getNextPlayer().ordinal()] |= squareMask;
+//                    long x = squareMask ^ masks[square];
+//                    nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
+//                    tracer |= x;
+//                    switchPlayer();
+//                    return true;
+//                }
+//            }
+//
+//            // Apply the move
+//            bitboards[getNextPlayer().ordinal()] |= squareMask;
+//            long x = squareMask ^ masks[square];
+//            nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
+//            tracer |= x;
+//            switchPlayer();
+//
+//            return true;
+//        }
+    }
+
+    /**
+     * Applies the first move on an empty board.
+     */
+    private boolean applyFirstMove(long squareMask, int square) {
+        bitboards[getNextPlayer().ordinal()] |= squareMask;
+        switchPlayer();
+        updateMasks(squareMask, square);
+        return true;
+    }
+
+    /**
+     * Applies a move and updates relevant masks.
+     */
+    private boolean applyMove(long squareMask, int square) {
+        bitboards[getNextPlayer().ordinal()] |= squareMask;
+        updateMasks(squareMask, square);
+        switchPlayer();
+        return true;
+    }
+
+    /**
+     * Validates and applies a non-standard move if it is allowed.
+     */
+    private boolean validateAndApplyNonStandardMove(long squareMask, int square) {
+        System.out.println("Not a standard move!");
+
+        long alternativeMask = tracer ^ getCombinedBitboard();
+        if ((alternativeMask & squareMask) == 0) {
+            // Move is invalid
+            return false;
+        }
+
+        // Apply the non-standard move
+        return applyMove(squareMask, square);
+    }
+
+    /**
+     * Updates the next valid moves mask and tracer after a move.
+     */
+    private void updateMasks(long squareMask, int square) {
+        long x = squareMask ^ masks[square];
+        long combinedBoard = getCombinedBitboard();
+
+        nextValidMovesMask = (x & combinedBoard) ^ x;
+        tracer |= x;
     }
 
     public long getTracerMask() {
