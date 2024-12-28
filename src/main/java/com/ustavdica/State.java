@@ -10,6 +10,7 @@ public class State {
 
     // Experimenting for now
     private long tracer = 0L;
+    private long nextValidMovesMask = 0L;
     private final long[] masks = new long[49];
 
     public State(Player startingPlayer) {
@@ -88,24 +89,38 @@ public class State {
     public boolean makeMove(int square) {
 
         // If board is empty apply move and return true
-        // if (getCombinedBitboard() == 0) {
+        if (getCombinedBitboard() == 0) {
+
+            // Apply the move
             bitboards[getNextPlayer().ordinal()] |= 1L << square;
             switchPlayer();
 
-            // long mask = (1L << 41) | (1L << 40) | (1L << 34) | (1L << 33) | (1L << 27) | (1L << 26);
+            // Calculate next valid moves
+            long x = (1L << square) ^ masks[square];
 
-            //print(masks[48]);
-            //print(masks[47]);
+            // Remember what are next valid moves (save mask)
+            nextValidMovesMask = x;
+
+            // Update tracer mask
+            tracer |= x;
 
             return true;
-        //} else {
+        } else {
             // If board has last move validate if move can be played, then apply it
 
+            // Check if wanted move can be played
+            if ((nextValidMovesMask & (1L << square)) != 0) {
+                System.out.println("Move on square " + square + " can be played!");
+            } else {
+                System.out.println("Move can't be played!");
+            }
 
 
 
-         //   return false;
-        //}
+
+
+            return false;
+        }
     }
 
     // ---------------------
