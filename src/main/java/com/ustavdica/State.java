@@ -22,26 +22,33 @@ public class State {
     public boolean makeMove(int square) {
 
         // If board is empty apply move and return true
-        if ((bitboards[Player.BLUE.ordinal()] | bitboards[Player.PINK.ordinal()]) == 0) {
+        // if (getCombinedBitboard() == 0) {
             bitboards[getNextPlayer().ordinal()] |= 1L << square;
             switchPlayer();
 
             long mask = (1L << 41) | (1L << 40) | (1L << 34) | (1L << 33) | (1L << 27) | (1L << 26);
 
-            print(mask);
+            //print(mask ^ getCombinedBitboard());
 
             return true;
-        } else {
+        //} else {
             // If board has last move validate if move can be played, then apply it
 
 
 
 
-            return false;
-        }
+         //   return false;
+        //}
     }
 
-
+    /**
+     * Retrieves the combined bitboard representing all occupied squares.
+     *
+     * @return A long value where bits set to 1 indicate occupied squares by any player.
+     */
+    public long getCombinedBitboard() {
+        return bitboards[Player.BLUE.ordinal()] | bitboards[Player.PINK.ordinal()];
+    }
 
     /**
      * Switches the current player to the next player.
@@ -108,8 +115,8 @@ public class State {
                 long bit = 1L << square << 15;
 
                 String background = "\u001B[0m";
-                if ((blueBoard & bit) > 0) background = "\u001B[48;5;21m";
-                if ((pinkBoard & bit) > 0) background = "\u001B[48;5;201m";
+                if ((blueBoard & bit) != 0) background = "\u001B[48;5;21m";
+                if ((pinkBoard & bit) != 0) background = "\u001B[48;5;201m";
 
                 sb.append(background);
                 if (square < 10) sb.append(" ");
