@@ -1,5 +1,8 @@
 package com.ustavdica;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  Represents the state of the game called 4mation.
  */
@@ -140,6 +143,31 @@ public class State {
 
     public long getNextValidMovesMask() {
         return nextValidMovesMask;
+    }
+
+    public List<Integer> getLegalMoves() {
+        return bitboardToMoves(nextValidMovesMask);
+    }
+
+    /**
+     * Extracts the indices of all set bits (1s) in the given bitboard.
+     *
+     * @param bitboard A long representing the bitboard, where each bit set to 1 indicates a move.
+     * @return A list of integers representing the indices of the set bits (0-based).
+     *
+     * @implNote This method uses {@code Long.numberOfTrailingZeros} to find the index of the least
+     *           significant bit (LSB) set to 1 and clears it using {@code bitboard &= bitboard - 1}.
+     *           Runs in O(k), where k is the number of set bits in the bitboard.
+     */
+    public List<Integer> bitboardToMoves(long bitboard) {
+        List<Integer> moves = new ArrayList<>();
+
+        while (bitboard != 0) {
+            int move = Long.numberOfTrailingZeros(bitboard);
+            moves.add(move);
+            bitboard &= bitboard - 1;
+        }
+        return moves;
     }
 
     // ---------------------
