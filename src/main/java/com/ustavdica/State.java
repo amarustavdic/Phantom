@@ -23,6 +23,13 @@ public class State {
 
     private void setMasks() {
 
+        // TODO: Improve the masks to save compute
+        /*
+            These masks do not need to have 1 in the middle saves time for not needed computation,
+            specifically saves time since there won't be need to compute against the current
+            move that has been performed/made.
+         */
+
         // Generate corner masks (0, 6, 42, 48)
         masks[48] = 0x0001830000000000L; // Top left
         masks[42] = 0x00000C1800000000L; // Top right
@@ -38,11 +45,14 @@ public class State {
             }
         }
 
-        // todo Generate top masks
+        // Generate top masks (47-43)
+        long x = generateMask(new int[]{44, 43, 42, 37, 36, 35});
+        print(x << 1);
 
-        // todo Generate bottom masks
 
-        // todo Generate left masks
+        // Generate bottom masks (5-1)
+
+        // Generate left masks
 
         // todo Generate right masks
 
