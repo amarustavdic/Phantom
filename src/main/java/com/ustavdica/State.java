@@ -24,13 +24,6 @@ public class State {
 
     private void setMasks() {
 
-        // TODO: Improve the masks to save compute
-        /*
-            These masks do not need to have 1 in the middle saves time for not needed computation,
-            specifically saves time since there won't be need to compute against the current
-            move that has been performed/made.
-         */
-
         // Generate corner masks (0, 6, 42, 48)
         masks[48] = 0x0001830000000000L; // Top left
         masks[42] = 0x00000C1800000000L; // Top right
@@ -88,15 +81,17 @@ public class State {
 
     public boolean makeMove(int square) {
 
+        long squareMask = 1L << square;
+
         // If board is empty apply move and return true
         if (getCombinedBitboard() == 0) {
 
             // Apply the move
-            bitboards[getNextPlayer().ordinal()] |= 1L << square;
+            bitboards[getNextPlayer().ordinal()] |= squareMask;
             switchPlayer();
 
             // Calculate next valid moves
-            long x = (1L << square) ^ masks[square];
+            long x = squareMask ^ masks[square];
 
             // Remember what are next valid moves (save mask)
             nextValidMovesMask = x;
@@ -108,19 +103,37 @@ public class State {
         } else {
             // If board has last move validate if move can be played, then apply it
 
-            // Check if wanted move can be played
-            if ((nextValidMovesMask & (1L << square)) != 0) {
-                System.out.println("Move on square " + square + " can be played!");
-            } else {
-                System.out.println("Move can't be played!");
+            // Check if wanted move can be played, if not exit
+            if ((nextValidMovesMask & squareMask) == 0) {
+
+                // Check if the played move is in tracer ^ combined
+                long y = tracer ^ getCombinedBitboard();
+                if (y == 0) {
+                    return false;
+                } else {
+                    // Apply the move
+                    bitboards[getNextPlayer().ordinal()] |= squareMask;
+                    long x = squareMask ^ masks[square];
+                    nextValidMovesMask = x;
+                    tracer |= x;
+                    switchPlayer();
+                    return true;
+                }
             }
 
+            // Apply the move
+            bitboards[getNextPlayer().ordinal()] |= squareMask;
+            long x = squareMask ^ masks[square];
+            nextValidMovesMask = x;
+            tracer |= x;
+            switchPlayer();
 
-
-
-
-            return false;
+            return true;
         }
+    }
+
+    public long getTracerMask() {
+        return tracer;
     }
 
     // ---------------------
