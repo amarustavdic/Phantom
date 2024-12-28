@@ -11,15 +11,32 @@ public class State {
     public State(Player startingPlayer) {
         this.bitboards = new long[2];
         this.metadata = 0L;
-
-        // Set the starting player in the metadata
-        if (startingPlayer == Player.PINK) {
-            metadata |= 0x8000000000000000L; // Set MSB for PINK
-        }
+        setNextPlayer(startingPlayer);
     }
 
 
+    public boolean makeMove(int square) {
+        return false;
+    }
 
+    /**
+     * Retrieves the player whose turn is next.
+     *
+     * @return The next player to make a move (Player.BLUE or Player.PINK).
+     */
+    public Player getNextPlayer() {
+        return (metadata & 0x8000000000000000L) == 0 ? Player.BLUE : Player.PINK;
+    }
+
+    /**
+     * Sets the next player to make a move.
+     *
+     * @param nextPlayer The player to set as the next player (Player.BLUE or Player.PINK).
+     */
+    private void setNextPlayer(Player nextPlayer) {
+        if (nextPlayer == Player.PINK) metadata |= 0x8000000000000000L;
+        else metadata &= 0x7FFFFFFFFFFFFFFFL;
+    }
 
     /**
      *  Prints the current state of the game board to the console.<br>
