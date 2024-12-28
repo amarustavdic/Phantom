@@ -8,6 +8,10 @@ public class State {
     private long[] bitboards;
     private long metadata;
 
+    // Experimenting for now
+    private long magicMask = 0L;
+    private long[] masks = new long[49];
+
     public State(Player startingPlayer) {
         this.bitboards = new long[2];
         this.metadata = 0L;
@@ -16,7 +20,34 @@ public class State {
 
 
     public boolean makeMove(int square) {
-        return false;
+
+        // If board is empty apply move and return true
+        if ((bitboards[Player.BLUE.ordinal()] | bitboards[Player.PINK.ordinal()]) == 0) {
+            bitboards[getNextPlayer().ordinal()] |= 1L << square;
+            switchPlayer();
+
+            long mask = (1L << 41) | (1L << 40) | (1L << 34) | (1L << 33) | (1L << 27) | (1L << 26);
+
+            print(mask);
+
+            return true;
+        } else {
+            // If board has last move validate if move can be played, then apply it
+
+
+
+
+            return false;
+        }
+    }
+
+
+
+    /**
+     * Switches the current player to the next player.
+     */
+    private void switchPlayer() {
+        metadata ^= 0x8000000000000000L;
     }
 
     /**
@@ -66,29 +97,45 @@ public class State {
         long blueBoard = bitboards[Player.BLUE.ordinal()];
         long pinkBoard = bitboards[Player.PINK.ordinal()];
 
-        blueBoard = blueBoard << 15;
-        pinkBoard = pinkBoard << 15;
+        blueBoard <<= 15;
+        pinkBoard <<= 15;
 
         StringBuilder sb = new StringBuilder();
         for (int row = 7; row > 0; row--) {
 
             for (int col = 0; col < 7 ; col++) {
                 int square = (row * 7) - col - 1;
-
                 long bit = 1L << square << 15;
 
                 String background = "\u001B[0m";
-                if ((blueBoard & bit) > 0) {
-                    background = "\u001B[48;5;21m";
-                }
-
-                if ((pinkBoard & bit) > 0) {
-                    background = "\u001B[48;5;201m";
-                }
+                if ((blueBoard & bit) > 0) background = "\u001B[48;5;21m";
+                if ((pinkBoard & bit) > 0) background = "\u001B[48;5;201m";
 
                 sb.append(background);
                 if (square < 10) sb.append(" ");
                 sb.append(square).append(' ').append("\u001B[0m");
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb);
+    }
+
+    /**
+     * Prints the given bitboard as a 7x7 grid.
+     *
+     * @param bitboard The bitboard to display.
+     */
+    public void print(long bitboard) {
+        bitboard <<= 15;
+
+        StringBuilder sb = new StringBuilder();
+        for (int row = 7; row > 0; row--) {
+            for (int col = 0; col < 7 ; col++) {
+                int square = (row * 7) - col - 1;
+                long bit = 1L << square << 15;
+
+                int value = (bitboard & bit) != 0 ? 1 : 0;
+                sb.append(value).append(' ');
             }
             sb.append("\n");
         }
