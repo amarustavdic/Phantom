@@ -42,6 +42,9 @@ public class Main {
             System.out.println("\nTime taken: " + df.format(timeInMs) + " ms");
 
             state.print();
+
+            // Check if there is a winner
+            handler.hasWinner(state);
         }
 
     }

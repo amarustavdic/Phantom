@@ -28,6 +28,7 @@ public class StateHandler {
             squareMasks[square] = 1L << square;
         }
 
+
         // Initializes the precomputed square outline masks
         this.squareOutlineMasks = new long[49];
 
@@ -226,6 +227,72 @@ public class StateHandler {
     public boolean performRandomMove(State state) {
 
         // TODO: Implement this (mcts needs this)
+
+        return false;
+    }
+
+    /**
+     * Checks if there is a winner in the current game state.
+     *
+     * @param state the current game state to evaluate
+     * @return true if a winner is determined, false otherwise
+     */
+    public boolean hasWinner(State state) {
+
+        long[] rowMasks = new long[7];
+        rowMasks[0] = 0x7fL;
+        rowMasks[1] = 0x7fL << 7;
+        rowMasks[2] = 0x7fL << 14;
+        rowMasks[3] = 0x7fL << 21;
+        rowMasks[4] = 0x7fL << 28;
+        rowMasks[5] = 0x7fL << 35;
+        rowMasks[6] = 0x7fL << 32;
+        long[] colMasks = new long[7];
+        colMasks[0] = 0x1010101010101L;
+        colMasks[1] = 0x1010101010101L << 1;
+        colMasks[2] = 0x1010101010101L << 2;
+        colMasks[3] = 0x1010101010101L << 3;
+        colMasks[4] = 0x1010101010101L << 4;
+        colMasks[5] = 0x1010101010101L << 5;
+        colMasks[6] = 0x1010101010101L << 6;
+
+        // From top-left to bottom-right
+        long[] diagonalMasks = new long[7];
+        diagonalMasks[0] = createMask(new int[]{3, 11, 19, 27});
+        diagonalMasks[1] = createMask(new int[]{2, 10, 18, 26, 34});
+        diagonalMasks[2] = createMask(new int[]{1, 9, 17, 25, 33, 41});
+        diagonalMasks[3] = createMask(new int[]{0, 8, 16, 24, 32, 40, 48});
+        diagonalMasks[4] = createMask(new int[]{7, 15, 23, 31, 39, 47});
+        diagonalMasks[5] = createMask(new int[]{14, 22, 30, 38, 46});
+        diagonalMasks[6] = createMask(new int[]{21, 29, 37, 45});
+
+        // From top-right to bottom-left
+        long[] antiDiagonalMasks = new long[7];
+        antiDiagonalMasks[0] = createMask(new int[]{3, 9, 15, 21});
+        antiDiagonalMasks[1] = createMask(new int[]{4, 10, 16, 22, 28});
+        antiDiagonalMasks[2] = createMask(new int[]{5, 11, 17, 23, 29, 35});
+        antiDiagonalMasks[3] = createMask(new int[]{6, 12, 18, 24, 30, 36, 42});
+        antiDiagonalMasks[4] = createMask(new int[]{13, 19, 25, 31, 37, 43});
+        antiDiagonalMasks[5] = createMask(new int[]{20, 26, 32, 38, 44});
+        antiDiagonalMasks[6] = createMask(new int[]{27, 33, 39, 45});
+
+        int lastMove = state.getLastMove();
+
+        int rowIndex = lastMove / 7;
+        int colIndex = lastMove % 7;
+
+        long blue = state.getBitboard(Player.BLUE);
+
+
+        long row = rowMasks[rowIndex] & blue;
+        int rowBc = Long.bitCount(row);
+
+        if (rowBc == 4) {
+            System.out.println("Blue wins");
+        }
+
+
+
 
         return false;
     }
