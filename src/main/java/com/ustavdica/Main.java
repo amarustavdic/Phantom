@@ -21,6 +21,11 @@ public class Main {
 
         while (true) {
 
+            // TODO: Fix bug (not urgent just silly)
+            /*
+            When generating moves that are available when board is empty well you get 64 moves (long 64 bit...),
+            I am not clipping it there, fuck it, it does not have any influence on anything else...
+             */
             String moves = handler.getAvailableMoves(state).toString();
             System.out.println("Available moves: " + moves);
 
