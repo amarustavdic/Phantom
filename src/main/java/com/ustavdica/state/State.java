@@ -18,6 +18,16 @@ public class State {
         setNextPlayer(startingPlayer);
     }
 
+    /**
+     * Creates a deep copy of the given State object.
+     *
+     * @param other the State object to copy
+     */
+    public State(State other) {
+        this.bitboards = other.bitboards.clone();
+        this.outlineAccumulator = other.outlineAccumulator;
+        this.metadata = other.metadata;
+    }
 
     // Internal methods accessible by StateHandler
 
