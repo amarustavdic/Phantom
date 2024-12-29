@@ -14,6 +14,7 @@ public class StateHandler {
 
     private static StateHandler instance;
 
+    // Precomputed masks for speed
     private final long[] squareMasks;
     private final long[] squareOutlineMasks;
 
