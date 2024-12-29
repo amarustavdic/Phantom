@@ -222,6 +222,14 @@ public class StateHandler {
         return bitboardToMoves(getValidMoveMask(state));
     }
 
+    // This one is needed for mcts simulation phase where you do random games
+    public boolean performRandomMove(State state) {
+
+        // TODO: Implement this (mcts needs this)
+
+        return false;
+    }
+
     /**
      * Prints the given bitboard as a 7x7 grid.
      *

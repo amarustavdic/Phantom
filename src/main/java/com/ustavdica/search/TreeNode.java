@@ -1,5 +1,7 @@
 package com.ustavdica.search;
 
+import com.ustavdica.state.State;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,12 +11,12 @@ public class TreeNode {
 
     private int visits;
     private double value;
-    private GameState state;
+    private State state;
     private TreeNode parent;
     private final List<TreeNode> children;
 
 
-    public TreeNode(GameState state, TreeNode parent) {
+    public TreeNode(State state, TreeNode parent) {
         this.visits = 0;
         this.value = 0;
         this.state = state;
@@ -58,6 +60,17 @@ public class TreeNode {
 
 
 
+    public void addValue(double value) {
+        this.value += value;
+    }
+
+    public void incrementVisits() {
+        this.visits++;
+    }
+
+
+
+
     public TreeNode getRandomChild() {
         return null;
     }
@@ -67,7 +80,11 @@ public class TreeNode {
         return null;
     }
 
-    public GameState getState() {
+    public TreeNode getParent() {
+        return parent;
+    }
+
+    public State getState() {
         return state;
     }
 

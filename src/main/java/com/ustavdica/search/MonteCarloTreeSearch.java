@@ -1,8 +1,25 @@
 package com.ustavdica.search;
 
+import com.ustavdica.state.State;
+import com.ustavdica.state.StateHandler;
+
 public class MonteCarloTreeSearch {
 
+    private final StateHandler stateHandler;
     private TreeNode root;
+
+    /**
+     * Constructs a MonteCarloTreeSearch instance with the specified StateHandler.
+     * <p>
+     * Injecting StateHandler ensures clear delegation of state-related operations,
+     * improves testability by allowing mock implementations, and decouples MCTS
+     * from a specific StateHandler instance.
+     *
+     * @param stateHandler the StateHandler responsible for state-related operations
+     */
+    public MonteCarloTreeSearch(StateHandler stateHandler) {
+        this.stateHandler = stateHandler;
+    }
 
 
     /**
@@ -19,7 +36,7 @@ public class MonteCarloTreeSearch {
      * @param timeLimit the time limit in milliseconds to run the MCTS algorithm
      * @return the best move as an integer, representing the optimal action for the current player
      */
-    public int findBestMove(GameState state, long timeLimit) {
+    public int findBestMove(State state, long timeLimit) {
 
         long startTime = System.currentTimeMillis();
         root = new TreeNode(state, null);
@@ -61,13 +78,27 @@ public class MonteCarloTreeSearch {
     }
 
     private double simulate(TreeNode node) {
+        State deepCopy = new State(node.getState());
+        while (!deepCopy.isTerminal()) {
+
+            stateHandler.performRandomMove(deepCopy);
+
+            // TODO: CONTINUE HERE...
+
+
+            // deepCopy.performRandomAction();
+        }
+        // return deepCopy.getSimulationOutcome();
 
         return 0;
     }
 
     private void backpropagate(TreeNode node, double simulationResult) {
-
+        while (node != null) {
+            node.incrementVisits();
+            node.addValue(simulationResult);
+            node = node.getParent();
+        }
     }
-
 
 }
