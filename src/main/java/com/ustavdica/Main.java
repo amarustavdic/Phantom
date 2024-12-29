@@ -1,5 +1,8 @@
 package com.ustavdica;
 
+import com.ustavdica.state.Player;
+import com.ustavdica.state.State;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,12 +15,7 @@ public class Main {
         State state = new State(Player.BLUE);
         state.print();
 
-        while (true) {
-            int square = Integer.parseInt(br.readLine());
-            state.makeMove(square);
-            state.print();
-            state.print(state.getNextValidMovesMask());
-            state.getLegalMoves().forEach(System.out::println);
-        }
+
+
     }
 }
