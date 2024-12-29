@@ -34,6 +34,26 @@ public class State {
         metadata ^= 0x8000000000000000L;
     }
 
+    /**
+     * Retrieves the bitboard for the specified player.
+     *
+     * @param player the player whose bitboard is to be retrieved
+     * @return the bitboard representing the player's current state
+     */
+    long getBitboard(Player player) {
+        return bitboards[player.ordinal()];
+    }
+
+    /**
+     * Sets the bitboard for the specified player.
+     *
+     * @param player   the player whose bitboard is to be updated
+     * @param bitboard the new bitboard representing the player's state
+     */
+    void setBitboard(Player player, long bitboard) {
+        bitboards[player.ordinal()] = bitboard;
+    }
+
 
     // Bellow are methods that are accessible to every class
 
