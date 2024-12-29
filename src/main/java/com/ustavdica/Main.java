@@ -45,6 +45,11 @@ public class Main {
 
             // Check if there is a winner
             handler.hasWinner(state);
+
+
+            // Trying random move function
+            handler.performRandomMove(state);
+            state.print();
         }
 
     }

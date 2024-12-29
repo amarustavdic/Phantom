@@ -1,6 +1,7 @@
 package com.ustavdica.state;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -225,10 +226,12 @@ public class StateHandler {
 
     // This one is needed for mcts simulation phase where you do random games
     public boolean performRandomMove(State state) {
-
-        // TODO: Implement this (mcts needs this)
-
-        return false;
+        List<Integer> moves = getAvailableMoves(state);
+        if (moves.isEmpty()) return false;
+        Collections.shuffle(moves);
+        int randomMove = moves.getFirst();
+        applyMove(state, randomMove);
+        return true;
     }
 
     /**
@@ -283,6 +286,8 @@ public class StateHandler {
         int rowIndex = lastMove / 7;
         int colIndex = lastMove % 7;
 
+
+        // Checking if there is win for blue
         long blue = state.getBitboard(Player.BLUE);
 
         // Check if there is win on row
