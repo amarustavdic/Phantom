@@ -116,6 +116,13 @@ public class StateHandler {
      */
     public boolean applyMove(State state, int square) {
 
+        Player targetPlayer = state.getNextPlayer();
+
+        long currentBitboard = state.getBitboard(targetPlayer);
+
+        state.setBitboard(targetPlayer, currentBitboard | squareMasks[square]);
+
+        state.switchPlayer();
 
 
         return false;
