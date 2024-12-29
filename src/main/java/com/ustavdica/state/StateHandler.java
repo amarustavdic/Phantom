@@ -239,6 +239,8 @@ public class StateHandler {
      */
     public boolean hasWinner(State state) {
 
+        // TODO: This function cry's for refactoring, to much wasted compute
+
         long[] rowMasks = new long[7];
         rowMasks[0] = 0x7fL;
         rowMasks[1] = 0x7fL << 7;
@@ -283,14 +285,41 @@ public class StateHandler {
 
         long blue = state.getBitboard(Player.BLUE);
 
-
-        long row = rowMasks[rowIndex] & blue;
-        int rowBc = Long.bitCount(row);
+        // Check if there is win on row
+        long rowBlue = rowMasks[rowIndex] & blue;
+        int rowBc = Long.bitCount(rowBlue);
 
         if (rowBc == 4) {
             System.out.println("Blue wins");
+            return true;
         }
 
+        // Check if there is win on col
+        long colBlue = colMasks[colIndex] & blue;
+        int colBc = Long.bitCount(colBlue);
+
+        if (colBc == 4) {
+            System.out.println("Blue wins");
+            return true;
+        }
+
+        // Check if there is win on any diagonal
+        for (long diagonalMask : diagonalMasks) {
+            int c = Long.bitCount(diagonalMask & blue);
+            if (c == 4) {
+                System.out.println("Blue wins");
+                return true;
+            }
+        }
+
+        // Check if there is win on any anti-diagonal
+        for (long antiDiagonalMask : antiDiagonalMasks) {
+            int c = Long.bitCount(antiDiagonalMask & blue);
+            if (c == 4) {
+                System.out.println("Blue wins");
+                return true;
+            }
+        }
 
 
 
