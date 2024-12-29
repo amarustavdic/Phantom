@@ -5,6 +5,9 @@ package com.ustavdica.state;
  */
 public class State {
 
+    // Number of bits needed to store the last move (0-48)
+    private static final int LAST_MOVE_BITS = 6; // 6 bits can represent numbers from 0 to 63
+
     private final long[] bitboards;
     private long metadata;
 
@@ -35,16 +38,6 @@ public class State {
     }
 
     /**
-     * Retrieves the bitboard for the specified player.
-     *
-     * @param player the player whose bitboard is to be retrieved
-     * @return the bitboard representing the player's current state
-     */
-    long getBitboard(Player player) {
-        return bitboards[player.ordinal()];
-    }
-
-    /**
      * Sets the bitboard for the specified player.
      *
      * @param player   the player whose bitboard is to be updated
@@ -54,8 +47,41 @@ public class State {
         bitboards[player.ordinal()] = bitboard;
     }
 
+    /**
+     * Sets the last move in the metadata.
+     *
+     * @param square the index of the square representing the last move (0-48)
+     */
+    void setLastMove(int square) {
+        // Clear the last move bits (they occupy the least significant 6 bits)
+        metadata &= -(1L << LAST_MOVE_BITS);
+
+        // Set the new last move
+        metadata |= (square & ((1L << LAST_MOVE_BITS) - 1));
+    }
+
 
     // Bellow are methods that are accessible to every class
+
+    /**
+     * Retrieves the last move from the metadata.
+     *
+     * @return the index of the square representing the last move (0-48)
+     */
+    public int getLastMove() {
+        // Extract the last move bits (assuming they occupy the least significant 6 bits)
+        return (int) (metadata & ((1L << LAST_MOVE_BITS) - 1));
+    }
+
+    /**
+     * Retrieves the bitboard for the specified player.
+     *
+     * @param player the player whose bitboard is to be retrieved
+     * @return the bitboard representing the player's current state
+     */
+    public long getBitboard(Player player) {
+        return bitboards[player.ordinal()];
+    }
 
     /**
      * Retrieves the player whose turn is next.

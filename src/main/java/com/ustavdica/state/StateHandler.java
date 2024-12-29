@@ -117,13 +117,18 @@ public class StateHandler {
     public boolean applyMove(State state, int square) {
 
         Player targetPlayer = state.getNextPlayer();
-
         long currentBitboard = state.getBitboard(targetPlayer);
 
-        state.setBitboard(targetPlayer, currentBitboard | squareMasks[square]);
+        // Get mask of squares where next move can be placed (following game rules)
 
+        // state.getValidMoveMask() ....
+
+
+        state.setBitboard(targetPlayer, currentBitboard | squareMasks[square]);
         state.switchPlayer();
 
+        // Setting the last move played
+        state.setLastMove(square);
 
         return false;
     }

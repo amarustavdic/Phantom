@@ -25,6 +25,8 @@ public class Main {
 
             handler.applyMove(state, targetSquare);
             state.print();
+
+            System.out.println("Last move: " + state.getLastMove());
         }
 
     }
