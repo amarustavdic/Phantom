@@ -212,7 +212,6 @@ public class StateHandler {
         return moves;
     }
 
-
     /**
      * Prints the given bitboard as a 7x7 grid.
      *
