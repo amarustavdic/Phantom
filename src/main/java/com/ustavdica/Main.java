@@ -20,6 +20,10 @@ public class Main {
         state.print();
 
         while (true) {
+
+            String moves = handler.getAvailableMoves(state).toString();
+            System.out.println("Available moves: " + moves);
+
             System.out.print("Enter square number: ");
             int targetSquare = Integer.parseInt(br.readLine());
             System.out.println();

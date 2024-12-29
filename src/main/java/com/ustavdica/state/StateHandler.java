@@ -213,6 +213,16 @@ public class StateHandler {
     }
 
     /**
+     * Retrieves a list of all legal moves for the current player.
+     *
+     * @param state the current game state
+     * @return a list of square indices representing all legal moves
+     */
+    public List<Integer> getAvailableMoves(State state) {
+        return bitboardToMoves(getValidMoveMask(state));
+    }
+
+    /**
      * Prints the given bitboard as a 7x7 grid.
      *
      * @param bitboard The bitboard to display.
