@@ -126,17 +126,69 @@ public class StateHandler {
         long currentBitboard = state.getBitboard(targetPlayer);
 
         // Get mask of squares where next move can be placed (following game rules)
+        long validMoveMask = getValidMoveMask(state);
 
-        // state.getValidMoveMask() ....
+        if ((validMoveMask & squareMasks[square]) == 0) {
+            System.out.println("Can't play that move currently!");
+            return false;
+        }
 
-
+        // Update this player bitboard, applying his move
         state.setBitboard(targetPlayer, currentBitboard | squareMasks[square]);
         state.switchPlayer();
+
+        // Update outline accumulator
+        state.setOutlineAccumulator(state.getOutlineAccumulator() | squareOutlineMasks[square]);
 
         // Setting the last move played
         state.setLastMove(square);
 
-        return false;
+        return true;
+    }
+
+    /**
+     * Computes the bitmask of valid moves for the current player.
+     * <p>
+     * This method evaluates the current game state and uses precomputed masks
+     * to generate a bitmask where each bit set to 1 represents a valid square
+     * for the next move, based on the game rules.
+     * <p>
+     * As part of StateHandler, this method ensures efficient computation by
+     * leveraging precomputed data and encapsulated logic for move validation.
+     *
+     * @param state the current game state
+     * @return a long value representing the bitmask of valid moves
+     */
+    public long getValidMoveMask(State state) {
+
+        long combined = state.getCombinedBitboard();
+
+        /*
+        Check if the board is empty, if board is empty by the rules
+        of the game this means that player can place his move on
+        any square on the board, thus we return mask that has all 1's
+         */
+        if (combined == 0) return ~combined;
+
+        // Otherwise we have more work to do, this part is for standard move
+        int lastSquare = state.getLastMove();
+        long lastSquareOutline = squareOutlineMasks[lastSquare];
+
+        // Make clip so we can cut lastSquareOutline
+        long clip = combined & lastSquareOutline;
+        long standardMoves = lastSquareOutline ^ clip;
+
+        /*
+        But it can happen that our player have closed itself in so-called island
+        (at least that is what I like to call it) and it has no way out, so
+        we need to make mask for non-standard move
+         */
+
+        // If there is still standard move available, return that
+        if (standardMoves != 0) return standardMoves;
+
+        // Return mask for the non-standard move
+        return combined ^ state.getOutlineAccumulator();
     }
 
     /**
@@ -144,10 +196,9 @@ public class StateHandler {
      *
      * @param bitboard A long representing the bitboard, where each bit set to 1 indicates a move.
      * @return A list of integers representing the indices of the set bits (0-based).
-     *
      * @implNote This method uses {@code Long.numberOfTrailingZeros} to find the index of the least
-     *           significant bit (LSB) set to 1 and clears it using {@code bitboard &= bitboard - 1}.
-     *           Runs in O(k), where k is the number of set bits in the bitboard.
+     * significant bit (LSB) set to 1 and clears it using {@code bitboard &= bitboard - 1}.
+     * Runs in O(k), where k is the number of set bits in the bitboard.
      */
     public List<Integer> bitboardToMoves(long bitboard) {
         List<Integer> moves = new ArrayList<>();
@@ -161,9 +212,6 @@ public class StateHandler {
     }
 
 
-
-
-
     /**
      * Prints the given bitboard as a 7x7 grid.
      *
@@ -174,7 +222,7 @@ public class StateHandler {
 
         StringBuilder sb = new StringBuilder();
         for (int row = 7; row > 0; row--) {
-            for (int col = 0; col < 7 ; col++) {
+            for (int col = 0; col < 7; col++) {
                 int square = (row * 7) - col - 1;
                 long bit = 1L << square << 15;
 

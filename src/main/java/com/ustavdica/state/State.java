@@ -1,7 +1,7 @@
 package com.ustavdica.state;
 
 /**
- *  Represents the state of the game.
+ * Represents the state of the game.
  */
 public class State {
 
@@ -9,6 +9,7 @@ public class State {
     private static final int LAST_MOVE_BITS = 6; // 6 bits can represent numbers from 0 to 63
 
     private final long[] bitboards;
+    private long outlineAccumulator;
     private long metadata;
 
     public State(Player startingPlayer) {
@@ -19,6 +20,18 @@ public class State {
 
 
     // Internal methods accessible by StateHandler
+
+    /**
+     * Sets the outline accumulator for the state.
+     * <p>
+     * This method updates the outline accumulator, which tracks the combined
+     * outline masks of all applied moves in the game.
+     *
+     * @param outlineAccumulator the new outline accumulator value
+     */
+    void setOutlineAccumulator(long outlineAccumulator) {
+        this.outlineAccumulator = outlineAccumulator;
+    }
 
     /**
      * Sets the next player to make a move.
@@ -64,6 +77,18 @@ public class State {
     // Bellow are methods that are accessible to every class
 
     /**
+     * Retrieves the outline accumulator for the state.
+     * <p>
+     * The outline accumulator represents the combined outline masks of all
+     * moves applied so far in the game.
+     *
+     * @return the current value of the outline accumulator
+     */
+    public long getOutlineAccumulator() {
+        return outlineAccumulator;
+    }
+
+    /**
      * Retrieves the last move from the metadata.
      *
      * @return the index of the square representing the last move (0-48)
@@ -102,28 +127,28 @@ public class State {
     }
 
     /**
-     *  Prints the current state of the game board to the console.<br>
-     *  <br>
-     *  The board is displayed as a 7x7 grid. Each cell shows the square number<br>
-     *  and is color-coded based on the player occupying the square:<br>
-     *  <br>
-     *  - Blue squares are highlighted with a blue background.<br>
-     *  - Pink squares are highlighted with a pink background.<br>
-     *  - Empty squares are uncolored.<br>
-     *  <br>
-     *  Square numbering starts from 0 (bottom-right corner) and increments<br>
-     *  right-to-left, bottom-to-top.<br>
-     *  <br>
-     *  Example Output:<br>
-     *  ----------------<br>
-     *  48 47 46 45 44 43 42<br>
-     *  41 40 39 38 37 36 35<br>
-     *  ...<br>
-     *  6  5  4  3  2  1  0<br>
-     *  <br>
-     *  Color Key:<br>
-     *  - Blue: Player.BLUE<br>
-     *  - Pink: Player.PINK<br>
+     * Prints the current state of the game board to the console.<br>
+     * <br>
+     * The board is displayed as a 7x7 grid. Each cell shows the square number<br>
+     * and is color-coded based on the player occupying the square:<br>
+     * <br>
+     * - Blue squares are highlighted with a blue background.<br>
+     * - Pink squares are highlighted with a pink background.<br>
+     * - Empty squares are uncolored.<br>
+     * <br>
+     * Square numbering starts from 0 (bottom-right corner) and increments<br>
+     * right-to-left, bottom-to-top.<br>
+     * <br>
+     * Example Output:<br>
+     * ----------------<br>
+     * 48 47 46 45 44 43 42<br>
+     * 41 40 39 38 37 36 35<br>
+     * ...<br>
+     * 6  5  4  3  2  1  0<br>
+     * <br>
+     * Color Key:<br>
+     * - Blue: Player.BLUE<br>
+     * - Pink: Player.PINK<br>
      */
     public void print() {
         long blueBoard = bitboards[Player.BLUE.ordinal()];
@@ -135,7 +160,7 @@ public class State {
         StringBuilder sb = new StringBuilder();
         for (int row = 7; row > 0; row--) {
 
-            for (int col = 0; col < 7 ; col++) {
+            for (int col = 0; col < 7; col++) {
                 int square = (row * 7) - col - 1;
                 long bit = 1L << square << 15;
 
@@ -151,164 +176,5 @@ public class State {
         }
         System.out.println(sb);
     }
-
-
-
-
-
-
-
-
-    // TODO: Refactor commented out code bellow
-
-
-
-//    public boolean makeMove(int square) {
-//        long squareMask = 1L << square;
-//        long combinedBoard = getCombinedBitboard();
-//
-//        // Handle the first move (empty board)
-//        if (combinedBoard == 0) {
-//            return applyFirstMove(squareMask, square);
-//        }
-//
-//        // Validate and handle standard and non-standard move
-//        if ((nextValidMovesMask & squareMask) != 0) {
-//            // Standard move
-//            return applyMove(squareMask, square);
-//        } else {
-//            // Non-standard move
-//            return validateAndApplyNonStandardMove(squareMask, square);
-//        }
-//
-//
-//
-//        // If board is empty apply move and return true
-//        if (getCombinedBitboard() == 0) {
-//
-//            // Apply the move
-//            bitboards[getNextPlayer().ordinal()] |= squareMask;
-//            switchPlayer();
-//
-//            // Calculate next valid moves
-//            long x = squareMask ^ masks[square];
-//
-//            // Remember what are next valid moves (save mask)
-//            nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
-//
-//            // Update tracer mask
-//            tracer |= x;
-//
-//            return true;
-//        } else {
-//            // If board has last move validate if move can be played, then apply it
-//
-//            // Check if wanted move can be played, if not exit
-//            if ((nextValidMovesMask & squareMask) == 0) {
-//
-//                // TODO: There is bug here figure out what exactly, happens, I know I know shitty code needs refactoring
-//
-//                // The problem is that when you create an island, and then yes you can play on squares that are
-//                // just next to that island, but the bug is that it lets you play more times near that island...
-//
-//
-//                System.out.println("Not a standard move!");
-//
-//                // Check if the played move is in tracer ^ combined
-//                long y = tracer ^ getCombinedBitboard();
-//
-//                print(y);
-//
-//                if ((y & squareMask) == 0) {
-//                    return false;
-//                } else {
-//                    // Apply the move
-//                    bitboards[getNextPlayer().ordinal()] |= squareMask;
-//                    long x = squareMask ^ masks[square];
-//                    nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
-//                    tracer |= x;
-//                    switchPlayer();
-//                    return true;
-//                }
-//            }
-//
-//            // Apply the move
-//            bitboards[getNextPlayer().ordinal()] |= squareMask;
-//            long x = squareMask ^ masks[square];
-//            nextValidMovesMask = (x & getCombinedBitboard()) ^ x;
-//            tracer |= x;
-//            switchPlayer();
-//
-//            return true;
-//        }
-//    }
-
-//    /**
-//     * Applies the first move on an empty board.
-//     */
-//    private boolean applyFirstMove(long squareMask, int square) {
-//        bitboards[getNextPlayer().ordinal()] |= squareMask;
-//        switchPlayer();
-//        updateMasks(squareMask, square);
-//        return true;
-//    }
-
-//    /**
-//     * Applies a move and updates relevant masks.
-//     */
-//    private boolean applyMove(long squareMask, int square) {
-//
-//        // Looks like a quick fix
-//        if ((nextValidMovesMask & squareMask) == 0) return false;
-//
-//        bitboards[getNextPlayer().ordinal()] |= squareMask;
-//        updateMasks(squareMask, square);
-//        switchPlayer();
-//        return true;
-//    }
-
-//    /**
-//     * Validates and applies a non-standard move if it is allowed.
-//     */
-//    private boolean validateAndApplyNonStandardMove(long squareMask, int square) {
-//        System.out.println("Not a standard move!");
-//
-//        long alternativeMask = tracer ^ getCombinedBitboard();
-//        if ((alternativeMask & squareMask) == 0) {
-//            // Move is invalid
-//            return false;
-//        }
-//
-//        // Apply the non-standard move
-//        return applyMove(squareMask, square);
-//    }
-
-//    /**
-//     * Updates the next valid moves mask and tracer after a move.
-//     */
-//    private void updateMasks(long squareMask, int square) {
-//        long x = squareMask ^ masks[square];
-//        long combinedBoard = getCombinedBitboard();
-//
-//        nextValidMovesMask = (x & combinedBoard) ^ x;
-//        tracer |= x;
-//    }
-
-
-//    /**
-//     * Retrieves a list of legal moves based on the current game state.
-//     *
-//     * @return A list of integers representing the indices (square numbers) of legal moves.
-//     *         If there are standard moves available, they are returned. Otherwise, alternative
-//     *         moves are computed as the difference between the combined bitboard and the tracer.
-//     */
-//    public List<Integer> getLegalMoves() {
-//        if (nextValidMovesMask != 0) {
-//            return bitboardToMoves(nextValidMovesMask);
-//        } else {
-//            long alternative = getCombinedBitboard() ^ tracer;
-//            return bitboardToMoves(alternative);
-//        }
-//    }
 
 }
