@@ -1,10 +1,10 @@
 package com.ustavdica.mvc.model;
 
-public class SquareModel {
+public class Square {
 
     private final int squareNumber;
 
-    public SquareModel(int squareNumber) {
+    public Square(int squareNumber) {
         this.squareNumber = squareNumber;
     }
 

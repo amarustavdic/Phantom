@@ -1,6 +1,6 @@
 package com.ustavdica.mvc.controller;
 
-import com.ustavdica.mvc.model.SquareModel;
+import com.ustavdica.mvc.model.Square;
 import com.ustavdica.mvc.view.SquareView;
 
 import java.awt.event.ActionEvent;
@@ -8,10 +8,10 @@ import java.awt.event.ActionListener;
 
 public class SquareController {
 
-    private final SquareModel model;
+    private final Square model;
     private final SquareView view;
 
-    public SquareController(SquareModel model, SquareView view) {
+    public SquareController(Square model, SquareView view) {
         this.model = model;
         this.view = view;
 
