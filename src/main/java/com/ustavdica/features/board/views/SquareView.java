@@ -24,4 +24,23 @@ public class SquareView extends JButton {
             setBackground(new Color(255, 0, 255));
         }
     }
+
+    // Blinks the background red 3 times to indicate an invalid move
+    public void blinkBackgroundRed() {
+        Color originalColor = getBackground();
+        SwingWorker<Void, Void> blinker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                for (int i = 0; i < 3; i++) {
+                    setBackground(Color.RED);
+                    Thread.sleep(150);
+                    setBackground(originalColor);
+                    Thread.sleep(150);
+                }
+                return null;
+            }
+        };
+        blinker.execute();
+    }
+
 }

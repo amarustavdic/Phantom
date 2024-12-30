@@ -120,10 +120,7 @@ public class StateHandler {
     public boolean applyMove(State state, int square) {
 
         // Gracefully handling the input
-        if (square < 0 || square > 48) {
-            System.out.println("Invalid move: Square index must be between 0 and 48 (inclusive).");
-            return false;
-        }
+        if (square < 0 || square > 48) return false;
 
         Player targetPlayer = state.getNextPlayer();
         long currentBitboard = state.getBitboard(targetPlayer);
@@ -132,7 +129,7 @@ public class StateHandler {
         long validMoveMask = getValidMoveMask(state);
 
         if ((validMoveMask & squareMasks[square]) == 0) {
-            System.out.println("Can't play that move currently!");
+            // This move cannot be played by the game rules, thus false
             return false;
         }
 

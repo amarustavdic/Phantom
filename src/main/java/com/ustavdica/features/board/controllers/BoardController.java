@@ -56,6 +56,9 @@ public class BoardController {
 
         if (isApplied) {
             view.updateAppearance(player);
+        } else {
+            // Move cannot be made cuz it is against game rules
+            view.blinkBackgroundRed();
         }
 
         // List<Integer> availableMoves = stateHandler.getAvailableMoves(currentState);
