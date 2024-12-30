@@ -46,20 +46,29 @@ public class BoardController {
 
     private void onSquareClicked(Square square, SquareView view) {
 
-        System.out.println("Square clicked: " + square.getSquareNumber());
+        // System.out.println("Square clicked: " + square.getSquareNumber());
 
         int clickedSquare = square.getSquareNumber();
-        State currentState = model.getState();
-        Player player = currentState.getNextPlayer();
+        State state = model.getState();
+        Player player = state.getNextPlayer();
 
-        boolean isApplied = stateHandler.applyMove(currentState, clickedSquare);
+        boolean isApplied = stateHandler.applyMove(state, clickedSquare);
 
+        // Try to apply the move given by the user
         if (isApplied) {
             view.updateAppearance(player);
         } else {
             // Move cannot be made cuz it is against game rules
             view.blinkBackgroundRed();
         }
+
+        // After applied move check if someone won
+        boolean hasWinner = stateHandler.hasWinner(state);
+
+        if (hasWinner) {
+            System.out.println("Has winner: " + player.name());
+        }
+
 
         // List<Integer> availableMoves = stateHandler.getAvailableMoves(currentState);
         // System.out.println("Available moves: " + availableMoves.toString());;

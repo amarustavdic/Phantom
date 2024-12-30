@@ -19,6 +19,9 @@ public class StateHandler {
     private final long[] squareMasks;
     private final long[] squareOutlineMasks;
 
+    // Masks needed to check winning positions
+    private long[] COLUMN_MASKS;
+
 
     // Private constructor to prevent instantiation
     private StateHandler() {
@@ -80,6 +83,21 @@ public class StateHandler {
         squareOutlineMasks[28] = u << 21;
         squareOutlineMasks[35] = u << 28;
 
+
+        // Initializations masks needed for winner checking mostly
+        initializeColumnMasks();
+    }
+
+    // Columns masks 0 - most right column, 6 - most left column
+    private void initializeColumnMasks() {
+        COLUMN_MASKS = new long[7];
+        COLUMN_MASKS[0] = createMask(new int[]{0, 7, 14, 21, 28, 35, 42});
+        COLUMN_MASKS[1] = createMask(new int[]{1, 8, 15, 22, 29, 36, 43});
+        COLUMN_MASKS[2] = createMask(new int[]{2, 9, 16, 23, 30, 37, 44});
+        COLUMN_MASKS[3] = createMask(new int[]{3, 10, 17, 24, 31, 38, 45});
+        COLUMN_MASKS[4] = createMask(new int[]{4, 11, 18, 25, 32, 39, 46});
+        COLUMN_MASKS[5] = createMask(new int[]{5, 12, 19, 26, 33, 40, 47});
+        COLUMN_MASKS[6] = createMask(new int[]{6, 13, 20, 27, 34, 41, 48});
     }
 
     /**
@@ -249,6 +267,7 @@ public class StateHandler {
         rowMasks[4] = 0x7fL << 28;
         rowMasks[5] = 0x7fL << 35;
         rowMasks[6] = 0x7fL << 32;
+
         long[] colMasks = new long[7];
         colMasks[0] = 0x1010101010101L;
         colMasks[1] = 0x1010101010101L << 1;
@@ -257,6 +276,8 @@ public class StateHandler {
         colMasks[4] = 0x1010101010101L << 4;
         colMasks[5] = 0x1010101010101L << 5;
         colMasks[6] = 0x1010101010101L << 6;
+
+        state.print();
 
         // From top-left to bottom-right
         long[] diagonalMasks = new long[7];
@@ -292,7 +313,7 @@ public class StateHandler {
         int rowBc = Long.bitCount(rowBlue);
 
         if (rowBc == 4) {
-            System.out.println("Blue wins");
+//            System.out.println("Blue wins");
             return true;
         }
 
@@ -300,8 +321,9 @@ public class StateHandler {
         long colBlue = colMasks[colIndex] & blue;
         int colBc = Long.bitCount(colBlue);
 
+        // TODO: There is problem here, problem with masks not properly checking
         if (colBc == 4) {
-            System.out.println("Blue wins");
+//            System.out.println("Blue wins");
             return true;
         }
 
@@ -309,7 +331,7 @@ public class StateHandler {
         for (long diagonalMask : diagonalMasks) {
             int c = Long.bitCount(diagonalMask & blue);
             if (c == 4) {
-                System.out.println("Blue wins");
+//                System.out.println("Blue wins");
                 return true;
             }
         }
@@ -318,13 +340,18 @@ public class StateHandler {
         for (long antiDiagonalMask : antiDiagonalMasks) {
             int c = Long.bitCount(antiDiagonalMask & blue);
             if (c == 4) {
-                System.out.println("Blue wins");
+//                System.out.println("Blue wins");
                 return true;
             }
         }
 
+        // TODO: Check if there is win for pink
 
 
+
+
+
+        // Nobody wins yet
         return false;
     }
 
