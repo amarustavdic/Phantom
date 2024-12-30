@@ -15,4 +15,11 @@ public class SquareView extends JButton {
     }
 
     // Bellow functions to communicate with this view, e.g: updateAppearance();
+    public void updateAppearance(boolean isHighlighted) {
+        if (isHighlighted) {
+            setBackground(new Color(50, 205, 50));
+        } else {
+            setBackground(new Color(30, 31, 34));
+        }
+    }
 }

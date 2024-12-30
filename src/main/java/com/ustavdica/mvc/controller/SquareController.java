@@ -25,6 +25,9 @@ public class SquareController {
     }
 
     private void onSquareClicked() {
+
+        view.updateAppearance(true);
+
         System.out.println("Clicked on square: " + model.getSquareNumber());
     }
 
