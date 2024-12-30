@@ -15,11 +15,8 @@ public class StateHandler {
 
     private static StateHandler instance;
 
-    // Precomputed masks for speed
-    private final long[] squareMasks;
-    private final long[] squareOutlineMasks;
-
-    // Masks needed to check winning positions
+    private long[] SQUARE_BIT_MASKS;
+    private long[] SQUARE_OUTLINE_MASKS;
     private long[] ROW_MASKS;
     private long[] COLUMN_MASKS;
     private long[] DIAGONAL_MASKS;
@@ -28,71 +25,96 @@ public class StateHandler {
 
     // Private constructor to prevent instantiation
     private StateHandler() {
+        initializeSquareBitMasks();
+        initializeSquareOutlineMasks();
+        initializeRowMasks();
+        initializeColumnMasks();
+        initializeDiagonalMasks();
+        initializeAntiDiagonalMasks();
+    }
 
-        // Initializes the precomputed masks for each square
-        this.squareMasks = new long[49];
-        for (int square = 0; square < squareMasks.length; square++) {
-            squareMasks[square] = 1L << square;
+    /**
+     * Retrieves the single instance of StateHandler.
+     * <p>
+     * This method implements the Singleton pattern, ensuring that only one
+     * instance of StateHandler exists throughout the application.
+     * It is thread-safe and lazily initializes the instance.
+     *
+     * @return the single instance of StateHandler
+     */
+    public static synchronized StateHandler getInstance() {
+        if (instance == null) instance = new StateHandler();
+        return instance;
+    }
+
+
+
+    /**
+     * Initializes bit masks for each square on a 7x7 board.
+     * <p>
+     * These masks are precomputed and are allowing efficient manipulation
+     * and checks of individual squares on the board.
+     */
+    private void initializeSquareBitMasks() {
+        SQUARE_BIT_MASKS = new long[49];
+        for (int square = 0; square < SQUARE_BIT_MASKS.length; square++) {
+            SQUARE_BIT_MASKS[square] = 1L << square;
         }
+    }
 
-
-        // Initializes the precomputed square outline masks
-        this.squareOutlineMasks = new long[49];
+    /**
+     * Initializes outline masks, which are needed for calculating available moves
+     */
+    private void initializeSquareOutlineMasks() {
+        SQUARE_OUTLINE_MASKS = new long[49];
 
         // Generate corner masks (0, 6, 42, 48)
-        squareOutlineMasks[48] = 0x0001830000000000L; // Top left
-        squareOutlineMasks[42] = 0x00000C1800000000L; // Top right
-        squareOutlineMasks[6] = 0x0000000000003060L; // Bottom left
-        squareOutlineMasks[0] = 0x0000000000000183L; // Bottom right
+        SQUARE_OUTLINE_MASKS[48] = 0x0001830000000000L; // Top left
+        SQUARE_OUTLINE_MASKS[42] = 0x00000C1800000000L; // Top right
+        SQUARE_OUTLINE_MASKS[6] = 0x0000000000003060L; // Bottom left
+        SQUARE_OUTLINE_MASKS[0] = 0x0000000000000183L; // Bottom right
 
         // Generate inner masks (8-12, 15-19, 22-26, 29-33, 36-40)
         long mask = 0x000000000001C387L; // Base mask
         for (int row = 1; row <= 5; row++) {
             int start = row * 7 + 1;
             for (int shift = 0; shift < 5; shift++) {
-                squareOutlineMasks[start + shift] = mask << (row - 1) * 7 + shift;
+                SQUARE_OUTLINE_MASKS[start + shift] = mask << (row - 1) * 7 + shift;
             }
         }
 
         // Generate top masks (47-43)
         long x = createMask(new int[]{44, 43, 42, 37, 36, 35});
-        squareOutlineMasks[43] = x;
-        squareOutlineMasks[44] = x << 1;
-        squareOutlineMasks[45] = x << 2;
-        squareOutlineMasks[46] = x << 3;
-        squareOutlineMasks[47] = x << 4;
+        SQUARE_OUTLINE_MASKS[43] = x;
+        SQUARE_OUTLINE_MASKS[44] = x << 1;
+        SQUARE_OUTLINE_MASKS[45] = x << 2;
+        SQUARE_OUTLINE_MASKS[46] = x << 3;
+        SQUARE_OUTLINE_MASKS[47] = x << 4;
 
         // Generate bottom masks (5-1)
         long y = createMask(new int[]{9, 8, 7, 2, 1, 0});
-        squareOutlineMasks[1] = y;
-        squareOutlineMasks[2] = y << 1;
-        squareOutlineMasks[3] = y << 2;
-        squareOutlineMasks[4] = y << 3;
-        squareOutlineMasks[5] = y << 4;
+        SQUARE_OUTLINE_MASKS[1] = y;
+        SQUARE_OUTLINE_MASKS[2] = y << 1;
+        SQUARE_OUTLINE_MASKS[3] = y << 2;
+        SQUARE_OUTLINE_MASKS[4] = y << 3;
+        SQUARE_OUTLINE_MASKS[5] = y << 4;
 
         // Generate left masks
         long z = createMask(new int[]{20, 19, 13, 12, 6, 5});
-        squareOutlineMasks[13] = z;
-        squareOutlineMasks[20] = z << 7;
-        squareOutlineMasks[27] = z << 14;
-        squareOutlineMasks[34] = z << 21;
-        squareOutlineMasks[41] = z << 28;
+        SQUARE_OUTLINE_MASKS[13] = z;
+        SQUARE_OUTLINE_MASKS[20] = z << 7;
+        SQUARE_OUTLINE_MASKS[27] = z << 14;
+        SQUARE_OUTLINE_MASKS[34] = z << 21;
+        SQUARE_OUTLINE_MASKS[41] = z << 28;
 
         // Generate right masks
         long u = createMask(new int[]{15, 14, 8, 7, 1, 0});
-        squareOutlineMasks[7] = u;
-        squareOutlineMasks[14] = u << 7;
-        squareOutlineMasks[21] = u << 14;
-        squareOutlineMasks[28] = u << 21;
-        squareOutlineMasks[35] = u << 28;
-
-
-        // ---------------------------------- refactored code bellow (nicely grouped)
-
-        initializeRowMasks();
-        initializeColumnMasks();
+        SQUARE_OUTLINE_MASKS[7] = u;
+        SQUARE_OUTLINE_MASKS[14] = u << 7;
+        SQUARE_OUTLINE_MASKS[21] = u << 14;
+        SQUARE_OUTLINE_MASKS[28] = u << 21;
+        SQUARE_OUTLINE_MASKS[35] = u << 28;
     }
-
 
     /**
      * Initializes row masks for a 7x7 board.
@@ -136,22 +158,44 @@ public class StateHandler {
         COLUMN_MASKS[6] = createMask(new int[]{6, 13, 20, 27, 34, 41, 48});
     }
 
-
-
+    /**
+     * Initializes diagonal masks for a 7x7 board, focusing on diagonals
+     * that run from the top-left to the bottom-right (diagonals) of the board.
+     * <p>
+     * Each diagonal mask is a bitmask representing the positions in a specific diagonal,
+     * allowing efficient checks for winning conditions along these diagonals.
+     */
+    private void initializeDiagonalMasks() {
+        DIAGONAL_MASKS = new long[7];
+        DIAGONAL_MASKS[0] = createMask(new int[]{3, 11, 19, 27});
+        DIAGONAL_MASKS[1] = createMask(new int[]{2, 10, 18, 26, 34});
+        DIAGONAL_MASKS[2] = createMask(new int[]{1, 9, 17, 25, 33, 41});
+        DIAGONAL_MASKS[3] = createMask(new int[]{0, 8, 16, 24, 32, 40, 48});
+        DIAGONAL_MASKS[4] = createMask(new int[]{7, 15, 23, 31, 39, 47});
+        DIAGONAL_MASKS[5] = createMask(new int[]{14, 22, 30, 38, 46});
+        DIAGONAL_MASKS[6] = createMask(new int[]{21, 29, 37, 45});
+    }
 
     /**
-     * Retrieves the single instance of StateHandler.
+     * Initializes anti-diagonal masks for a 7x7 board, focusing on diagonals
+     * that run from the top-right to the bottom-left of the board.
      * <p>
-     * This method implements the Singleton pattern, ensuring that only one
-     * instance of StateHandler exists throughout the application.
-     * It is thread-safe and lazily initializes the instance.
-     *
-     * @return the single instance of StateHandler
+     * Each anti-diagonal mask is a bitmask representing the positions in a specific anti-diagonal,
+     * enabling efficient checks for winning conditions along these diagonals.
      */
-    public static synchronized StateHandler getInstance() {
-        if (instance == null) instance = new StateHandler();
-        return instance;
+    private void initializeAntiDiagonalMasks() {
+        ANTI_DIAGONAL_MASKS = new long[7];
+        ANTI_DIAGONAL_MASKS[0] = createMask(new int[]{3, 9, 15, 21});
+        ANTI_DIAGONAL_MASKS[1] = createMask(new int[]{4, 10, 16, 22, 28});
+        ANTI_DIAGONAL_MASKS[2] = createMask(new int[]{5, 11, 17, 23, 29, 35});
+        ANTI_DIAGONAL_MASKS[3] = createMask(new int[]{6, 12, 18, 24, 30, 36, 42});
+        ANTI_DIAGONAL_MASKS[4] = createMask(new int[]{13, 19, 25, 31, 37, 43});
+        ANTI_DIAGONAL_MASKS[5] = createMask(new int[]{20, 26, 32, 38, 44});
+        ANTI_DIAGONAL_MASKS[6] = createMask(new int[]{27, 33, 39, 45});
     }
+
+
+
 
     /**
      * Creates a mask from the given square indices.
@@ -185,17 +229,17 @@ public class StateHandler {
         // Get mask of squares where next move can be placed (following game rules)
         long validMoveMask = getValidMoveMask(state);
 
-        if ((validMoveMask & squareMasks[square]) == 0) {
+        if ((validMoveMask & SQUARE_BIT_MASKS[square]) == 0) {
             // This move cannot be played by the game rules, thus false
             return false;
         }
 
         // Update this player bitboard, applying his move
-        state.setBitboard(targetPlayer, currentBitboard | squareMasks[square]);
+        state.setBitboard(targetPlayer, currentBitboard | SQUARE_BIT_MASKS[square]);
         state.switchPlayer();
 
         // Update outline accumulator
-        state.setOutlineAccumulator(state.getOutlineAccumulator() | squareOutlineMasks[square]);
+        state.setOutlineAccumulator(state.getOutlineAccumulator() | SQUARE_OUTLINE_MASKS[square]);
 
         // Setting the last move played
         state.setLastMove(square);
@@ -229,7 +273,7 @@ public class StateHandler {
 
         // Otherwise we have more work to do, this part is for standard move
         int lastSquare = state.getLastMove();
-        long lastSquareOutline = squareOutlineMasks[lastSquare];
+        long lastSquareOutline = SQUARE_OUTLINE_MASKS[lastSquare];
 
         // Make clip so we can cut lastSquareOutline
         long clip = combined & lastSquareOutline;
@@ -296,95 +340,10 @@ public class StateHandler {
      */
     public boolean hasWinner(State state) {
 
-        // TODO: This function cry's for refactoring, to much wasted compute
-
-        long[] rowMasks = new long[7];
-        rowMasks[0] = 0x7fL;
-        rowMasks[1] = 0x7fL << 7;
-        rowMasks[2] = 0x7fL << 14;
-        rowMasks[3] = 0x7fL << 21;
-        rowMasks[4] = 0x7fL << 28;
-        rowMasks[5] = 0x7fL << 35;
-        rowMasks[6] = 0x7fL << 32;
-
-        long[] colMasks = new long[7];
-        colMasks[0] = 0x1010101010101L;
-        colMasks[1] = 0x1010101010101L << 1;
-        colMasks[2] = 0x1010101010101L << 2;
-        colMasks[3] = 0x1010101010101L << 3;
-        colMasks[4] = 0x1010101010101L << 4;
-        colMasks[5] = 0x1010101010101L << 5;
-        colMasks[6] = 0x1010101010101L << 6;
-
-        state.print();
-
-        // From top-left to bottom-right
-        long[] diagonalMasks = new long[7];
-        diagonalMasks[0] = createMask(new int[]{3, 11, 19, 27});
-        diagonalMasks[1] = createMask(new int[]{2, 10, 18, 26, 34});
-        diagonalMasks[2] = createMask(new int[]{1, 9, 17, 25, 33, 41});
-        diagonalMasks[3] = createMask(new int[]{0, 8, 16, 24, 32, 40, 48});
-        diagonalMasks[4] = createMask(new int[]{7, 15, 23, 31, 39, 47});
-        diagonalMasks[5] = createMask(new int[]{14, 22, 30, 38, 46});
-        diagonalMasks[6] = createMask(new int[]{21, 29, 37, 45});
-
-        // From top-right to bottom-left
-        long[] antiDiagonalMasks = new long[7];
-        antiDiagonalMasks[0] = createMask(new int[]{3, 9, 15, 21});
-        antiDiagonalMasks[1] = createMask(new int[]{4, 10, 16, 22, 28});
-        antiDiagonalMasks[2] = createMask(new int[]{5, 11, 17, 23, 29, 35});
-        antiDiagonalMasks[3] = createMask(new int[]{6, 12, 18, 24, 30, 36, 42});
-        antiDiagonalMasks[4] = createMask(new int[]{13, 19, 25, 31, 37, 43});
-        antiDiagonalMasks[5] = createMask(new int[]{20, 26, 32, 38, 44});
-        antiDiagonalMasks[6] = createMask(new int[]{27, 33, 39, 45});
-
         int lastMove = state.getLastMove();
 
         int rowIndex = lastMove / 7;
         int colIndex = lastMove % 7;
-
-
-        // Checking if there is win for blue
-        long blue = state.getBitboard(Player.BLUE);
-
-        // Check if there is win on row
-        long rowBlue = rowMasks[rowIndex] & blue;
-        int rowBc = Long.bitCount(rowBlue);
-
-        if (rowBc == 4) {
-//            System.out.println("Blue wins");
-            return true;
-        }
-
-        // Check if there is win on col
-        long colBlue = colMasks[colIndex] & blue;
-        int colBc = Long.bitCount(colBlue);
-
-        // TODO: There is problem here, problem with masks not properly checking
-        if (colBc == 4) {
-//            System.out.println("Blue wins");
-            return true;
-        }
-
-        // Check if there is win on any diagonal
-        for (long diagonalMask : diagonalMasks) {
-            int c = Long.bitCount(diagonalMask & blue);
-            if (c == 4) {
-//                System.out.println("Blue wins");
-                return true;
-            }
-        }
-
-        // Check if there is win on any anti-diagonal
-        for (long antiDiagonalMask : antiDiagonalMasks) {
-            int c = Long.bitCount(antiDiagonalMask & blue);
-            if (c == 4) {
-//                System.out.println("Blue wins");
-                return true;
-            }
-        }
-
-        // TODO: Check if there is win for pink
 
 
         // Nobody wins yet
