@@ -360,11 +360,17 @@ public class StateHandler {
         if (hasFourOnesWithSpacing(extractedCol, 6)) return true;
 
         // Check if there is win on diagonal
-
+        for (long diagonalMask : DIAGONAL_MASKS) {
+            long extractedDiagonal = playersBitboard & diagonalMask;
+            if (hasFourOnesWithSpacing(extractedDiagonal, 7)) return true;
+        }
 
         // Check if there is win on anti-diagonal
+        for (long antiDiagonalMask : ANTI_DIAGONAL_MASKS) {
+            long extractedAntidiagonal = playersBitboard & antiDiagonalMask;
+            if (hasFourOnesWithSpacing(extractedAntidiagonal, 5)) return true;
+        }
 
-        // Nobody wins yet
         return false;
     }
 
