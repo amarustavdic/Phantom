@@ -1,6 +1,6 @@
-package com.ustavdica.view;
+package com.ustavdica.features.board.views;
 
-import com.ustavdica.logic.state.Player;
+import com.ustavdica.features.state.Player;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;

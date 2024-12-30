@@ -1,4 +1,4 @@
-package com.ustavdica.logic.state;
+package com.ustavdica.features.state;
 
 public enum Player {
     BLUE,

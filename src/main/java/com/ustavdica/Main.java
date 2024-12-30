@@ -1,8 +1,8 @@
 package com.ustavdica;
 
-import com.ustavdica.controller.BoardController;
-import com.ustavdica.model.Board;
-import com.ustavdica.view.BoardView;
+import com.ustavdica.features.board.controllers.BoardController;
+import com.ustavdica.features.board.models.Board;
+import com.ustavdica.features.board.views.BoardView;
 import javax.swing.*;
 import java.io.IOException;
 

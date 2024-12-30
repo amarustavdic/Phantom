@@ -1,12 +1,12 @@
-package com.ustavdica.controller;
+package com.ustavdica.features.board.controllers;
 
-import com.ustavdica.model.Board;
-import com.ustavdica.model.Square;
-import com.ustavdica.view.BoardView;
-import com.ustavdica.view.SquareView;
-import com.ustavdica.logic.state.Player;
-import com.ustavdica.logic.state.State;
-import com.ustavdica.logic.state.StateHandler;
+import com.ustavdica.features.board.views.BoardView;
+import com.ustavdica.features.board.views.SquareView;
+import com.ustavdica.features.board.models.Board;
+import com.ustavdica.features.board.models.Square;
+import com.ustavdica.features.state.Player;
+import com.ustavdica.features.state.State;
+import com.ustavdica.features.state.StateHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

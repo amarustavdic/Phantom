@@ -1,7 +1,8 @@
-package com.ustavdica.model;
+package com.ustavdica.features.board.models;
 
-import com.ustavdica.logic.state.Player;
-import com.ustavdica.logic.state.State;
+import com.ustavdica.features.state.Player;
+import com.ustavdica.features.state.State;
+
 import java.util.ArrayList;
 import java.util.List;
 

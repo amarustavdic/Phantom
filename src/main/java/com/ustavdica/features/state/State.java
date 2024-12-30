@@ -1,4 +1,4 @@
-package com.ustavdica.logic.state;
+package com.ustavdica.features.state;
 
 /**
  * Represents the state of the game.

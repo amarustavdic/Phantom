@@ -1,4 +1,4 @@
-package com.ustavdica.model;
+package com.ustavdica.features.board.models;
 
 public class Square {
 

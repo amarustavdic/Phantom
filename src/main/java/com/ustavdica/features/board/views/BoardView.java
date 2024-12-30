@@ -1,4 +1,4 @@
-package com.ustavdica.view;
+package com.ustavdica.features.board.views;
 
 import javax.swing.*;
 import java.awt.*;
