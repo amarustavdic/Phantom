@@ -84,11 +84,20 @@ public class StateHandler {
         squareOutlineMasks[35] = u << 28;
 
 
-        // Initializations masks needed for winner checking mostly
+
         initializeColumnMasks();
     }
 
-    // Columns masks 0 - most right column, 6 - most left column
+    /**
+     * Initializes column masks for a 7x7 board.
+     * Each column mask is a bitmask representing the positions in a specific column
+     * of the board, where:
+     * - Column 0 corresponds to the most right column.
+     * - Column 6 corresponds to the most left column.
+     * <p>
+     * These masks are used for efficiently checking if there is a winner by determining
+     * if a specific column contains a winning condition.
+     */
     private void initializeColumnMasks() {
         COLUMN_MASKS = new long[7];
         COLUMN_MASKS[0] = createMask(new int[]{0, 7, 14, 21, 28, 35, 42});
@@ -99,6 +108,10 @@ public class StateHandler {
         COLUMN_MASKS[5] = createMask(new int[]{5, 12, 19, 26, 33, 40, 47});
         COLUMN_MASKS[6] = createMask(new int[]{6, 13, 20, 27, 34, 41, 48});
     }
+
+
+
+
 
     /**
      * Retrieves the single instance of StateHandler.
@@ -346,9 +359,6 @@ public class StateHandler {
         }
 
         // TODO: Check if there is win for pink
-
-
-
 
 
         // Nobody wins yet
