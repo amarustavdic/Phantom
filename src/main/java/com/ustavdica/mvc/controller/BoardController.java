@@ -4,12 +4,11 @@ import com.ustavdica.mvc.model.Board;
 import com.ustavdica.mvc.model.Square;
 import com.ustavdica.mvc.view.BoardView;
 import com.ustavdica.mvc.view.SquareView;
+import com.ustavdica.state.Player;
 import com.ustavdica.state.State;
 import com.ustavdica.state.StateHandler;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 public class BoardController {
 
@@ -49,13 +48,18 @@ public class BoardController {
 
         System.out.println("Square clicked: " + square.getSquareNumber());
 
+        int clickedSquare = square.getSquareNumber();
         State currentState = model.getState();
+        Player player = currentState.getNextPlayer();
 
-        List<Integer> availableMoves = stateHandler.getAvailableMoves(currentState);
+        boolean isApplied = stateHandler.applyMove(currentState, clickedSquare);
 
-        System.out.println("Available moves: " + availableMoves.toString());;
+        if (isApplied) {
+            view.updateAppearance(player);
+        }
 
-        view.updateAppearance(true);
+        // List<Integer> availableMoves = stateHandler.getAvailableMoves(currentState);
+        // System.out.println("Available moves: " + availableMoves.toString());;
     }
 
 }

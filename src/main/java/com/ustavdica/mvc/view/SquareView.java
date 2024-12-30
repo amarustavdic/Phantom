@@ -1,5 +1,7 @@
 package com.ustavdica.mvc.view;
 
+import com.ustavdica.state.Player;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -15,11 +17,12 @@ public class SquareView extends JButton {
     }
 
     // Bellow functions to communicate with this view, e.g: updateAppearance();
-    public void updateAppearance(boolean isHighlighted) {
-        if (isHighlighted) {
-            setBackground(new Color(50, 205, 50));
+    public void updateAppearance(Player player) {
+
+        if (player == Player.BLUE) {
+            setBackground(new Color(50, 71, 205));
         } else {
-            setBackground(new Color(30, 31, 34));
+            setBackground(new Color(255, 0, 255));
         }
     }
 }

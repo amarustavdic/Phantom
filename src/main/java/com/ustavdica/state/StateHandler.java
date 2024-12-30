@@ -171,7 +171,7 @@ public class StateHandler {
         of the game this means that player can place his move on
         any square on the board, thus we return mask that has all 1's
          */
-        if (combined == 0) return ~combined;
+        if (combined == 0) return 0x1ffffffffffffL;
 
         // Otherwise we have more work to do, this part is for standard move
         int lastSquare = state.getLastMove();
