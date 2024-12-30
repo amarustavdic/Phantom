@@ -3,8 +3,6 @@ package com.ustavdica;
 import com.ustavdica.state.Player;
 import com.ustavdica.state.State;
 import com.ustavdica.state.StateHandler;
-import com.ustavdica.ui.EventHandler;
-import com.ustavdica.ui.MainFrame;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -18,11 +16,6 @@ public class Main {
         State state = new State(Player.BLUE);
         StateHandler stateHandler = StateHandler.getInstance();
 
-        EventHandler eventHandler = new EventHandler(state, stateHandler);
-
-        SwingUtilities.invokeLater(() -> {
-            new MainFrame(eventHandler);
-        });
 
 //
 //        // Testing bellow
