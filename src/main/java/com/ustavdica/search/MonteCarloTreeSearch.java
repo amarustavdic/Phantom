@@ -46,6 +46,8 @@ public class MonteCarloTreeSearch {
             TreeNode expanded = expand(selected);
             double simulationResult = simulate(expanded);
             backpropagate(expanded, simulationResult);
+
+            System.out.println("Mcts searching...");
         }
 
         // TODO: Return the result, best child should be best move...
