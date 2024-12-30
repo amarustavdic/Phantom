@@ -352,10 +352,17 @@ public class StateHandler {
         // Check if there is win on row
         long rowMask = ROW_MASKS[rowIndex];
         long extractedRow = playersBitboard & rowMask;
+        if (hasFourOnesWithSpacing(extractedRow, 0)) return true;
+
+        // Check if there is win on col
+        long colMask = COLUMN_MASKS[colIndex];
+        long extractedCol = playersBitboard & colMask;
+        if (hasFourOnesWithSpacing(extractedCol, 6)) return true;
+
+        // Check if there is win on diagonal
 
 
-        System.out.println("Has four ones: " + hasFourOnesWithSpacing(extractedRow, 0));
-
+        // Check if there is win on anti-diagonal
 
         // Nobody wins yet
         return false;
