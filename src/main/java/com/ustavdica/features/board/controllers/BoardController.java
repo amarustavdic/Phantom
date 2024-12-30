@@ -59,7 +59,7 @@ public class BoardController {
             view.updateAppearance(player);
         } else {
             // Move cannot be made cuz it is against game rules
-            view.blinkBackgroundRed();
+            view.blinkBackgroundRed(view);
         }
 
         // After applied move check if someone won

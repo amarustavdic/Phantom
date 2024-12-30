@@ -26,17 +26,26 @@ public class SquareView extends JButton {
     }
 
     // Blinks the background red 3 times to indicate an invalid move
-    public void blinkBackgroundRed() {
+    public void blinkBackgroundRed(SquareView squareView) {
         Color originalColor = getBackground();
         SwingWorker<Void, Void> blinker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
+
+                // Since updating ui has to be done by EDT (otherwise strange things happen)
+                // Disable the square view on the EDT
+                SwingUtilities.invokeLater(() -> squareView.setEnabled(false));
+
                 for (int i = 0; i < 3; i++) {
                     setBackground(Color.RED);
                     Thread.sleep(150);
                     setBackground(originalColor);
                     Thread.sleep(150);
                 }
+
+                // Re-enable the square view on the EDT
+                SwingUtilities.invokeLater(() -> squareView.setEnabled(true));
+
                 return null;
             }
         };
