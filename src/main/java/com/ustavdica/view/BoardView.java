@@ -1,4 +1,4 @@
-package com.ustavdica.mvc.view;
+package com.ustavdica.view;
 
 import javax.swing.*;
 import java.awt.*;

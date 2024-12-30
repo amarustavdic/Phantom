@@ -1,8 +1,7 @@
-package com.ustavdica.mvc.model;
+package com.ustavdica.model;
 
-import com.ustavdica.state.Player;
-import com.ustavdica.state.State;
-
+import com.ustavdica.logic.state.Player;
+import com.ustavdica.logic.state.State;
 import java.util.ArrayList;
 import java.util.List;
 

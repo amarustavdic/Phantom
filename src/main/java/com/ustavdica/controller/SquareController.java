@@ -1,10 +1,11 @@
-package com.ustavdica.mvc.controller;
+package com.ustavdica.controller;
 
-import com.ustavdica.mvc.model.Square;
-import com.ustavdica.mvc.view.SquareView;
-
+import com.ustavdica.model.Square;
+import com.ustavdica.view.SquareView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+// TODO: Make use of square controller
 
 public class SquareController {
 

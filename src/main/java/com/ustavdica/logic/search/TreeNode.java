@@ -1,6 +1,6 @@
-package com.ustavdica.search;
+package com.ustavdica.logic.search;
 
-import com.ustavdica.state.State;
+import com.ustavdica.logic.state.State;
 
 import java.util.ArrayList;
 import java.util.List;

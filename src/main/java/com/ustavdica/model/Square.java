@@ -1,4 +1,4 @@
-package com.ustavdica.mvc.model;
+package com.ustavdica.model;
 
 public class Square {
 

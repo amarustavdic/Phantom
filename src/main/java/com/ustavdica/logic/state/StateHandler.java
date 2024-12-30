@@ -1,4 +1,4 @@
-package com.ustavdica.state;
+package com.ustavdica.logic.state;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,7 +1,7 @@
-package com.ustavdica.search;
+package com.ustavdica.logic.search;
 
-import com.ustavdica.state.State;
-import com.ustavdica.state.StateHandler;
+import com.ustavdica.logic.state.State;
+import com.ustavdica.logic.state.StateHandler;
 
 public class MonteCarloTreeSearch {
 

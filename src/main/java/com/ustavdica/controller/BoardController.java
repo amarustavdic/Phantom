@@ -1,12 +1,12 @@
-package com.ustavdica.mvc.controller;
+package com.ustavdica.controller;
 
-import com.ustavdica.mvc.model.Board;
-import com.ustavdica.mvc.model.Square;
-import com.ustavdica.mvc.view.BoardView;
-import com.ustavdica.mvc.view.SquareView;
-import com.ustavdica.state.Player;
-import com.ustavdica.state.State;
-import com.ustavdica.state.StateHandler;
+import com.ustavdica.model.Board;
+import com.ustavdica.model.Square;
+import com.ustavdica.view.BoardView;
+import com.ustavdica.view.SquareView;
+import com.ustavdica.logic.state.Player;
+import com.ustavdica.logic.state.State;
+import com.ustavdica.logic.state.StateHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
