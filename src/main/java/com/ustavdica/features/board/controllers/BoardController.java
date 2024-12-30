@@ -63,7 +63,7 @@ public class BoardController {
         }
 
         // After applied move check if someone won
-        boolean hasWinner = stateHandler.hasWinner(state);
+        boolean hasWinner = stateHandler.hasWon(state, player);
 
         if (hasWinner) {
             System.out.println("Has winner: " + player.name());

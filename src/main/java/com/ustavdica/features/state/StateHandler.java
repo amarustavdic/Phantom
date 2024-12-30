@@ -333,22 +333,53 @@ public class StateHandler {
     }
 
     /**
-     * Checks if there is a winner in the current game state.
+     * Checks if the {@code player} is winner.
      *
      * @param state the current game state to evaluate
-     * @return true if a winner is determined, false otherwise
+     * @param player the player that has made last move
+     * @return {@code true} {@code player} has won, {@code false} otherwise.
      */
-    public boolean hasWinner(State state) {
+    public boolean hasWon(State state, Player player) {
 
+        // Bitboard of the player that played last move
+        long playersBitboard = state.getBitboard(player);
+
+        // Calculate index based on last move
         int lastMove = state.getLastMove();
-
         int rowIndex = lastMove / 7;
         int colIndex = lastMove % 7;
+
+        // Check if there is win on row
+        long rowMask = ROW_MASKS[rowIndex];
+        long extractedRow = playersBitboard & rowMask;
+
+
+        System.out.println("Has four ones: " + hasFourOnesWithSpacing(extractedRow, 0));
 
 
         // Nobody wins yet
         return false;
     }
+
+    /**
+     * Checks if there are 4 `1`s in a long number, each separated by a specified number of spaces.
+     *
+     * @param number The long number to check.
+     * @param space  The number of spaces (bits) between each `1`.
+     * @return true if there are 4 `1`s with the specified spacing, false otherwise.
+     */
+    public boolean hasFourOnesWithSpacing(long number, int space) {
+        // Build the pattern mask for 4 `1`s with the specified spacing
+        long pattern = 0b1;
+        for (int i = 1; i < 4; i++) pattern |= (1L << (i * (space + 1)));
+
+        // Slide the pattern across the 64 bit long number
+        for (int i = 0; i <= 64 - (4 * (space + 1)) + space; i++) {
+            if ((number & (pattern << i)) == (pattern << i)) return true;
+        }
+        return false;
+    }
+
 
     /**
      * Prints the given bitboard as a 7x7 grid.
