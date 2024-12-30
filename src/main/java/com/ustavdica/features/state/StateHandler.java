@@ -20,7 +20,10 @@ public class StateHandler {
     private final long[] squareOutlineMasks;
 
     // Masks needed to check winning positions
+    private long[] ROW_MASKS;
     private long[] COLUMN_MASKS;
+    private long[] DIAGONAL_MASKS;
+    private long[] ANTI_DIAGONAL_MASKS;
 
 
     // Private constructor to prevent instantiation
@@ -84,8 +87,32 @@ public class StateHandler {
         squareOutlineMasks[35] = u << 28;
 
 
+        // ---------------------------------- refactored code bellow (nicely grouped)
 
+        initializeRowMasks();
         initializeColumnMasks();
+    }
+
+
+    /**
+     * Initializes row masks for a 7x7 board.
+     * Each row mask is a bitmask representing the positions in a specific row
+     * of the board, where:
+     * - Row 0 corresponds to the bottom row.
+     * - Row 6 corresponds to the top row.
+     * <p>
+     * These masks are used for efficiently checking if there is a winner by determining
+     * if a specific row contains a winning condition.
+     */
+    private void initializeRowMasks() {
+        ROW_MASKS = new long[7];
+        ROW_MASKS[0] = createMask(new int[]{6, 5, 4, 3, 2, 1, 0});
+        ROW_MASKS[1] = createMask(new int[]{13, 12, 11, 10, 9, 8, 7});
+        ROW_MASKS[2] = createMask(new int[]{20, 19, 18, 17, 16, 15, 14});
+        ROW_MASKS[3] = createMask(new int[]{27, 26, 25, 24, 23, 22, 21});
+        ROW_MASKS[4] = createMask(new int[]{34, 33, 32, 31, 30, 29, 28});
+        ROW_MASKS[5] = createMask(new int[]{41, 40, 39, 38, 37, 36, 35});
+        ROW_MASKS[6] = createMask(new int[]{48, 47, 46, 45, 44, 43, 42});
     }
 
     /**
@@ -108,7 +135,6 @@ public class StateHandler {
         COLUMN_MASKS[5] = createMask(new int[]{5, 12, 19, 26, 33, 40, 47});
         COLUMN_MASKS[6] = createMask(new int[]{6, 13, 20, 27, 34, 41, 48});
     }
-
 
 
 
