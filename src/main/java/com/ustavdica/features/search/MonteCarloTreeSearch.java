@@ -90,9 +90,9 @@ public class MonteCarloTreeSearch {
                 /*
                 Returning -1 for BLUE since for the current setup human player is blue and pink is mcts agent
 
-                Trying to punish mcts agent for loosing by doing -10 from score
+                Trying to punish mcts agent for loosing by doing -20 from score
                  */
-                stateHandler.hasWon(node.getState(), Player.BLUE) ? -10 : 1
+                stateHandler.hasWon(node.getState(), Player.BLUE) ? -20 : 1
         ));
 
         return outcome;

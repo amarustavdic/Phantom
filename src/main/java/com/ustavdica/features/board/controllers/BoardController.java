@@ -90,7 +90,7 @@ public class BoardController {
                     lockAllSquares();
 
                     // Perform AI move computation
-                    int best = mcts.findBestMove(state, 100000);
+                    int best = mcts.findBestMove(state, 150000);
 
                     // System.out.println("Performed " + mcts.getIterations() + " random game simulations!");
 
