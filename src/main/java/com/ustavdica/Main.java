@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("MVC Example");
+            JFrame frame = new JFrame("4mation - Monte Carlo");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
 
