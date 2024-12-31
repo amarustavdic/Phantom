@@ -52,7 +52,7 @@ public class MonteCarloTreeSearch {
             backpropagate(expanded, simulationResult);
         }
 
-        System.out.println(stateHandler.getAvailableMoves(root.getState()));
+        // System.out.println(stateHandler.getAvailableMoves(root.getState()));
 
         List<TreeNode> bestChildren = root.getChildren();
         TreeNode bestChild = bestChildren.stream().max(Comparator.comparingInt(TreeNode::getVisits)).orElse(null);

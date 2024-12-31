@@ -90,7 +90,7 @@ public class BoardController {
                     lockAllSquares();
 
                     // Perform AI move computation
-                    return mcts.findBestMove(state, 1000);
+                    return mcts.findBestMove(state, 3000);
                 }
 
                 @Override
