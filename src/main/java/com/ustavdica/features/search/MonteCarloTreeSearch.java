@@ -92,7 +92,7 @@ public class MonteCarloTreeSearch {
 
                 Trying to punish mcts agent for loosing by doing -20 from score
                  */
-                stateHandler.hasWon(node.getState(), Player.BLUE) ? -20 : 1
+                stateHandler.hasWon(node.getState(), Player.BLUE) ? -1 : 20
         ));
 
         return outcome;
