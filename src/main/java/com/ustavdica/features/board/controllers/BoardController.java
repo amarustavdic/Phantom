@@ -92,7 +92,7 @@ public class BoardController {
                     // Perform AI move computation
                     int best = mcts.findBestMove(state, 3000);
 
-                    System.out.println("Performed " + mcts.getIterations() + " random game simulations!");
+                    // System.out.println("Performed " + mcts.getIterations() + " random game simulations!");
 
                     return best;
                 }
