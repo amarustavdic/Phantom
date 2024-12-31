@@ -29,31 +29,16 @@ public class MonteCarloTreeSearch {
 
     /**
      * Finds the best move using the Monte Carlo Tree Search (MCTS) algorithm.
-     * <p>
-     * This method executes the MCTS algorithm within a specified time limit to
-     * determine the optimal move from the given game state. It performs the following steps:<br>
-     * - Selection: Navigates the search tree to select a promising node.<br>
-     * - Expansion: Expands the selected node by adding a child node.<br>
-     * - Simulation: Simulates a random game from the expanded node to estimate its value.<br>
-     * - Backpropagation: Propagates the simulation result up the tree to update node statistics.<br>
-     *
-     * @param state     the current game state from which to start the MCTS process
-     * @param timeLimit the time limit in milliseconds to run the MCTS algorithm
-     * @return the best move as an integer, representing the optimal action for the current player
      */
-    public int findBestMove(State state, long timeLimit) {
+    public int findBestMove(State state, int maxIterations) {
 
-        iterations = 0;
-        long startTime = System.currentTimeMillis();
         root = new TreeNode(state, null, stateHandler);
 
-        while (System.currentTimeMillis() - startTime < timeLimit) {
+        while (--maxIterations > 0) {
             TreeNode selected = select();
             TreeNode expanded = expand(selected);
             double simulationResult = simulate(expanded);
             backpropagate(expanded, simulationResult);
-
-            iterations++;
         }
 
         // System.out.println(stateHandler.getAvailableMoves(root.getState()));
