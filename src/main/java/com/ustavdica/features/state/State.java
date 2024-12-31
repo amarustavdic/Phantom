@@ -136,10 +136,6 @@ public class State {
         return bitboards[Player.BLUE.ordinal()] | bitboards[Player.PINK.ordinal()];
     }
 
-    public boolean isTerminal() {
-        // TODO: Implement check if state is terminal...
-        return false;
-    }
 
     /**
      * Prints the current state of the game board to the console.<br>

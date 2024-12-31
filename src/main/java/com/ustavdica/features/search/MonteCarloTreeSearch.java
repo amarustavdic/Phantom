@@ -1,7 +1,11 @@
 package com.ustavdica.features.search;
 
+import com.ustavdica.features.state.Player;
 import com.ustavdica.features.state.State;
 import com.ustavdica.features.state.StateHandler;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class MonteCarloTreeSearch {
 
@@ -39,19 +43,26 @@ public class MonteCarloTreeSearch {
     public int findBestMove(State state, long timeLimit) {
 
         long startTime = System.currentTimeMillis();
-        root = new TreeNode(state, null);
+        root = new TreeNode(state, null, stateHandler);
 
         while (System.currentTimeMillis() - startTime < timeLimit) {
             TreeNode selected = select();
             TreeNode expanded = expand(selected);
             double simulationResult = simulate(expanded);
             backpropagate(expanded, simulationResult);
-
-            System.out.println("Mcts searching...");
         }
 
-        // TODO: Return the result, best child should be best move...
-        return 0;
+        System.out.println(stateHandler.getAvailableMoves(root.getState()));
+
+        List<TreeNode> bestChildren = root.getChildren();
+        TreeNode bestChild = bestChildren.stream().max(Comparator.comparingInt(TreeNode::getVisits)).orElse(null);
+
+        if (bestChild == null) {
+            return -1; // if there is no children that means that no valid move, so indicate that with -1
+        }
+
+        int bestMove = bestChild.getState().getLastMove();
+        return bestMove;
     }
 
     /**
@@ -72,7 +83,7 @@ public class MonteCarloTreeSearch {
     }
 
     private TreeNode expand(TreeNode node) {
-        if (node.isSimulated() && !node.getState().isTerminal()) {
+        if (node.isSimulated() && !stateHandler.isTerminal(node.getState())) {
             node.expand();
             return node.getRandomChild();
         }
@@ -81,18 +92,19 @@ public class MonteCarloTreeSearch {
 
     private double simulate(TreeNode node) {
         State deepCopy = new State(node.getState());
-        while (!deepCopy.isTerminal()) {
-
+        while (!stateHandler.isTerminal(deepCopy)) {
             stateHandler.performRandomMove(deepCopy);
-
-            // TODO: CONTINUE HERE...
-
-
-            // deepCopy.performRandomAction();
         }
-        // return deepCopy.getSimulationOutcome();
 
-        return 0;
+        // TODO: This could be further optimized (not urgent)
+        int outcome = (stateHandler.isDraw(node.getState()) ? 0 : (
+                /*
+                Returning -1 for BLUE since for the current setup human player is blue and pink is mcts agent
+                 */
+                stateHandler.hasWon(node.getState(), Player.BLUE) ? -1 : 1
+        ));
+
+        return outcome;
     }
 
     private void backpropagate(TreeNode node, double simulationResult) {

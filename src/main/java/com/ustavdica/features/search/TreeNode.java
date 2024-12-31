@@ -1,8 +1,11 @@
 package com.ustavdica.features.search;
 
 import com.ustavdica.features.state.State;
+import com.ustavdica.features.state.StateHandler;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class TreeNode {
@@ -11,23 +14,29 @@ public class TreeNode {
 
     private int visits;
     private double value;
-    private State state;
-    private TreeNode parent;
+    private final State state;
+    private final TreeNode parent;
     private final List<TreeNode> children;
 
+    private final StateHandler stateHandler;
 
-    public TreeNode(State state, TreeNode parent) {
+
+    public TreeNode(State state, TreeNode parent, StateHandler stateHandler) {
         this.visits = 0;
         this.value = 0;
         this.state = state;
         this.parent = parent;
         this.children = new ArrayList<>();
+        this.stateHandler = stateHandler;
     }
 
 
     public void expand() {
-
-
+        stateHandler.getAvailableMoves(state).stream().map(move -> {
+            State stateCopy = new State(state); // Deep copy the current state
+            stateHandler.applyMove(stateCopy, move);
+            return new TreeNode(stateCopy, this, stateHandler);
+        }).forEach(children::add);
     }
 
 
@@ -44,21 +53,13 @@ public class TreeNode {
         return visits == 0 ? Double.MAX_VALUE : (value / visits) + C * Math.sqrt(Math.log(parent.visits) / visits);
     }
 
-
-
-
     public boolean hasChildren() {
-        // TODO: Implement hasChildren() in mcts tree node
-        return false;
+        return !children.isEmpty();
     }
 
     public boolean isSimulated() {
-        return false;
+        return visits > 0;
     }
-
-
-
-
 
     public void addValue(double value) {
         this.value += value;
@@ -68,16 +69,26 @@ public class TreeNode {
         this.visits++;
     }
 
-
-
-
     public TreeNode getRandomChild() {
-        return null;
+        Collections.shuffle(children);
+        return children.getFirst();
     }
 
     public TreeNode getBestChild() {
-        // TODO: Implement later
-        return null;
+        return children.stream().max(Comparator.comparingDouble(TreeNode::uct)).orElse(null);
+    }
+
+    public TreeNode getBestMove() {
+
+        TreeNode bestChild = children.stream().max(
+                Comparator.comparingInt(TreeNode::getVisits)
+        ).orElse(null);
+
+        if (bestChild == null) {
+            throw new RuntimeException("Unable to get best state. The root has no children!");
+        }
+
+        return bestChild;
     }
 
     public TreeNode getParent() {
@@ -88,5 +99,11 @@ public class TreeNode {
         return state;
     }
 
+    public int getVisits() {
+        return visits;
+    }
 
+    public List<TreeNode> getChildren() {
+        return children;
+    }
 }

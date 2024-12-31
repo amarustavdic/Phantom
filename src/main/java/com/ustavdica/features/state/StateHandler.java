@@ -323,13 +323,12 @@ public class StateHandler {
     }
 
     // This one is needed for mcts simulation phase where you do random games
-    public boolean performRandomMove(State state) {
+    public void performRandomMove(State state) {
         List<Integer> moves = getAvailableMoves(state);
-        if (moves.isEmpty()) return false;
+        if (moves.isEmpty()) return;
         Collections.shuffle(moves);
         int randomMove = moves.getFirst();
         applyMove(state, randomMove);
-        return true;
     }
 
     /**
@@ -393,6 +392,21 @@ public class StateHandler {
         return false;
     }
 
+    // TODO: Code bellow can be further optimized, just try not doing same computations more then once (fix later)
+    
+    public boolean isTerminal(State state) {
+        return isDraw(state) || hasWon(state, Player.BLUE) || hasWon(state, Player.PINK);
+    }
+
+    /**
+     * Checks if current state is draw.
+     * @param state current state of the game
+     * @return true if it is draw, false otherwise
+     */
+    public boolean isDraw(State state) {
+        int bitCount = Long.bitCount(state.getCombinedBitboard());
+        return !hasWon(state, Player.BLUE) && !hasWon(state, Player.PINK) && bitCount == 48;
+    }
 
     /**
      * Prints the given bitboard as a 7x7 grid.

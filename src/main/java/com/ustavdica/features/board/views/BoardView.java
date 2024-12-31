@@ -25,4 +25,8 @@ public class BoardView extends JPanel {
         return squareViews;
     }
 
+    public SquareView getSquareView(int index) {
+        return squareViews.reversed().get(index);
+    }
+
 }
