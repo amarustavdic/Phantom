@@ -11,6 +11,7 @@ public class MonteCarloTreeSearch {
 
     private final StateHandler stateHandler;
     private TreeNode root;
+    private int iterations;
 
     /**
      * Constructs a MonteCarloTreeSearch instance with the specified StateHandler.
@@ -42,6 +43,7 @@ public class MonteCarloTreeSearch {
      */
     public int findBestMove(State state, long timeLimit) {
 
+        iterations = 0;
         long startTime = System.currentTimeMillis();
         root = new TreeNode(state, null, stateHandler);
 
@@ -50,6 +52,8 @@ public class MonteCarloTreeSearch {
             TreeNode expanded = expand(selected);
             double simulationResult = simulate(expanded);
             backpropagate(expanded, simulationResult);
+
+            iterations++;
         }
 
         // System.out.println(stateHandler.getAvailableMoves(root.getState()));
@@ -100,8 +104,10 @@ public class MonteCarloTreeSearch {
         int outcome = (stateHandler.isDraw(node.getState()) ? 0 : (
                 /*
                 Returning -1 for BLUE since for the current setup human player is blue and pink is mcts agent
+
+                Trying to punish mcts agent for loosing by doing -10 from score
                  */
-                stateHandler.hasWon(node.getState(), Player.BLUE) ? -1 : 1
+                stateHandler.hasWon(node.getState(), Player.BLUE) ? -10 : 1
         ));
 
         return outcome;
@@ -115,4 +121,9 @@ public class MonteCarloTreeSearch {
         }
     }
 
+
+    // Getters
+    public int getIterations() {
+        return iterations;
+    }
 }
